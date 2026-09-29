@@ -23,7 +23,7 @@ window.GX = {
     genesis: { head: [['gold', .7], ['red', .3]], sky: [['sky', .7], ['teal', .2], ['gold', .1]], horizon: 470, ground: [['green', .6], ['teal', .4]], accent: ['gold', 'red'] },
     eden: { head: [['gold', .5], ['green', .5]], sky: [['sky', .8], ['teal', .2]], horizon: 500, ground: [['green', .7], ['earth', .3]], accent: ['red', 'gold'] },
     flood: { head: [['teal', .6], ['blue', .4]], sky: [['blue', .5], ['night', .3], ['violet', .2]], horizon: 420, ground: [['teal', .5], ['blue', .5]], accent: ['gold'] },
-    abraham: { head: [['violet', .7], ['gold', .3]], sky: [['night', .75], ['violet', .25]], horizon: 540, ground: [['violet', .5], ['earth', .5]], accent: ['gold'] },
+    abraham: { head: [['violet', .6], ['night', .4]], sky: [['night', .85], ['blue', .15]], horizon: 540, ground: [['violet', .5], ['earth', .5]], accent: ['violet'], pearl: ['night', 'violet'] },   // no gold: the stars are the only light-coloured glass
     exodus: { head: [['red', .6], ['gold', .4]], sky: [['night', .7], ['violet', .2], ['blue', .1]], horizon: 520, ground: [['sand', .7], ['earth', .3]], accent: ['red', 'gold'] },
     david: { head: [['gold', .6], ['red', .4]], sky: [['sky', .75], ['teal', .25]], horizon: 520, ground: [['earth', .6], ['green', .4]], accent: ['red'] },
     promise: { head: [['gold', .5], ['red', .5]], sky: [['night', .6], ['violet', .3], ['red', .1]], horizon: 540, ground: [['green', .5], ['earth', .5]], accent: ['gold', 'teal'] },
@@ -39,14 +39,14 @@ window.GX = {
       const fam = pick(zone, (c.h * 7.3 + c.h2 * 3.1) % 1);
       return fam[Math.floor(c.h2 * 53) % fam.length];
     };
-    const PEARL = [E.COL.gold, E.COL.white, E.COL.green, E.COL.sky];
-    return { fine: true, quarry, pearl: (k) => PEARL[k % 4] };
+    const PEARL = K.pearl ? K.pearl.map((f) => F[f][0]) : [E.COL.gold, E.COL.white, E.COL.green, E.COL.sky];
+    return { fine: true, quarry, pearl: (k) => PEARL[k % PEARL.length] };
   },
 
   // five-point star cut as one piece
-  star(E, P, x, y, r, id) {
+  star(E, P, x, y, r, id, col = E.COL.gold2) {
     const pts = [...Array(10)].map((_, k) => { const a = -Math.PI / 2 + k * Math.PI / 5, q = k % 2 ? r * .45 : r; return [x + Math.cos(a) * q, y + Math.sin(a) * q, 1]; });
-    P.piece(E.smooth(pts), E.COL.gold2, { id, lead: 3, mat: false });
+    P.piece(E.smooth(pts), col, { id, lead: 3, mat: false });
   },
   // a band of glass along a spine (serpent body, rainbow arc…): widths w(u) tapering, returns the outline points
   band(E, spine, w) {
