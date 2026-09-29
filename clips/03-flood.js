@@ -12,7 +12,8 @@ window.CLIP = {
     [0.8, 4.0, 'And the rain was upon the earth forty days and forty nights.', '四十晝夜降大雨在地上。'],
     [4.6, 7.9, 'The waters increased, and bare up the ark.', '水往上長，把方舟從地上漂起。'],
     [8.6, 12.0, 'And the dove came in to him; and, lo, in her mouth was an olive leaf.', '鴿子回到他那裡，嘴裡叼著一個橄欖葉子。'],
-    [13.4, 18.6, 'I do set my bow in the cloud, and it shall be for a token of a covenant.', '我把虹放在雲彩中，這就可作我與地立約的記號。'],
+    [13.4, 18.6, 'Neither shall all flesh be cut off any more by the waters of a flood.', '凡有血肉的，不再被洪水滅絕。'],
+    [19.4, 22.4, 'The Fourth Window · Abraham', '第四扇窗 · 亞伯拉罕'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   // air for the storm; a long swell as the water lifts the ark; the dove lands; six rising notes = six bands of the bow
   sfx: [[0.3, 'air', { d: 3.8, v: 1.0 }], [4.6, 'air', { d: 3.4, v: .8 }], [4.6, 'glass', { m: 62, v: .5 }], [7.6, 'glass', { m: 67, v: .5 }],
@@ -29,7 +30,7 @@ window.CLIP = {
       const eve = { ...a, sunCol: a.sunCol.map((v, j) => lerp(v, SUN.dusk[j], d)), sx: lerp(a.sx, -.55, d), sz: lerp(a.sz, 2.4, d) };
       const o = GX.mixState(GX.dark(eve, ss(seg(u, .25, .55))), GX.dark(b, 1 - m), m, () => u >= .5);
       o.cam = GX.camMix(key(u, [[0, a.cam], [.5, [0, 800, .84]]]), b.cam, ss(seg(u, .5, 1)));
-      return o;
+      return GX.blackout(o, Math.sin(Math.PI * seg(u, .42, .58)));   // the lancets' foot is in frame: change them in full dark
     },
     // B · the bow's window at dusk: tilt back up to the window, the bow reddens and goes dark, then down to Abraham
     B(E, a, b, u) {

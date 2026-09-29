@@ -9,9 +9,10 @@ window.CLIP = {
   duration: 19.2,
   timing: { fadeIn: [-1, 0], fade: [19.2, 19.2] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
-    [0.9, 4.8, 'And the LORD God planted a garden eastward in Eden.', '耶和華神在東方的伊甸立了一個園子。'],
+    [0.9, 4.8, 'But of the tree of the knowledge of good and evil, thou shalt not eat of it.', '只是分別善惡樹上的果子，你不可吃。'],
     [5.6, 9.3, 'She took of the fruit thereof, and did eat, and gave also unto her husband.', '就摘下果子來吃了，又給她丈夫。'],
     [12.8, 16.9, 'Therefore the LORD God sent him forth from the garden of Eden.', '耶和華神便打發他出伊甸園去。'],
+    [17.1, 19.1, 'The Third Window · The Flood', '第三扇窗 · 洪水'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   // calm glass notes; tension swell as the fruit is raised; near-silence 9.5–10.2; the crack; a low bell as the light leaves
   sfx: [[0.9, 'glass', { m: 74, v: .5 }], [2.6, 'glass', { m: 78, v: .35 }], [7.0, 'glass', { m: 79, v: .6 }], [7.4, 'air', { d: 2.0, v: .8 }],

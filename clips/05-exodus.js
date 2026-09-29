@@ -11,9 +11,10 @@ window.CLIP = {
   duration: 20.8,
   timing: { fadeIn: [-1, 0], fade: [20.8, 20.8] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
-    [0.9, 4.6, 'It was a cloud and darkness to them, but it gave light by night to these.', '在埃及營和以色列營中間有雲柱，一邊黑暗，一邊發光。'],
+    [0.9, 4.6, 'And the LORD went before them by night in a pillar of fire, to give them light.', '夜間，耶和華在火柱中光照他們。'],
     [5.3, 8.9, 'And Moses stretched out his hand over the sea; and the waters were divided.', '摩西向海伸杖，水便分開。'],
     [10.8, 16.6, 'And the children of Israel went into the midst of the sea upon the dry ground.', '以色列人下海中走乾地，水在他們的左右作了牆垣。'],
+    [17.4, 20.2, 'The Sixth Window · David', '第六扇窗 · 大衛'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   // the fire's roar; the rod raised (rising notes), the rays; the east wind as the sea opens; a bell on the dry road
   sfx: [[0.2, 'air', { d: 4.4, v: .9 }], [5.4, 'glass', { m: 62, v: .5 }], [5.9, 'glass', { m: 67, v: .5 }], [6.4, 'glass', { m: 71, v: .55 }],
@@ -26,9 +27,13 @@ window.CLIP = {
     // A · dawn over the sea: the fire goes out, a pale dawn band crosses the window left to right, re-glazing each
     // lancet before it reaches it, warms to afternoon and settles on Goliath's lancet as the camera trucks to him
     A(E, a, b, u) {
-      const { ss, seg, key, LX } = E, GX = window.GX, x = key(u, [[0, a.sunU], [.3, LX[0] - 60], [.85, LX[3]], [1, b.sunU]]);
-      const o = GX.mixState(a, b, ss(seg(u, .1, 1)), (i) => u > .3 && x > LX[i] - 330);
-      o.sunU = x; o.bandW = key(u, [[0, a.bandW], [.3, 380], [1, b.bandW]]);
+      const { ss, seg, key, LX } = E, GX = window.GX;
+      // the fire's band narrows and leaves the window to the left; for a moment the hall is black (the glass changes
+      // there, unseen); then the dawn band comes in from the left and crosses to Goliath
+      const x = key(u, [[0, a.sunU], [.28, LX[0] - 480], [.42, LX[0] - 480], [.88, LX[3]], [1, b.sunU]]);
+      const k = Math.sin(Math.PI * seg(u, .22, .48));
+      const o = GX.blackout(GX.mixState(a, b, ss(seg(u, .1, 1)), () => u >= .35), k);
+      o.sunU = x; o.bandW = key(u, [[0, a.bandW], [.28, 380], [.88, 380], [1, b.bandW]]);
       o.sunCol = key(u, [[0, a.sunCol], [.3, [.8, .6, .6]], [.55, [.8, .86, 1]], [1, b.sunCol]]);
       return o;
     },

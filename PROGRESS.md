@@ -3,11 +3,12 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Sprint 6 · Deliver, in review (2026-09-30):** chapter joints built, 2 variants each (A/B); the draft film uses all A
-(`out/bible-story.mp4`, 135.7 s, check OK). Waiting on the user: (1) pick A/B per joint from `out/joints/joints-review.mp4`
-(j1…j6, each = variant A then B; set `J.pick: 'B'` in the chapter to switch, re-render that chapter), (2) the newcomer
-review `docs/newcomer-review.md`: caption swaps (02, 03, 04, 05), chapter names, opening/end cards. Then: poster, srt,
-delete the unpicked variants and the j* dev clips, sign off. Renders are per clip in `out/` (not in git).
+**Sprint 6 · Deliver, in review (2026-09-30):** user picked **all A** joints; J4/J5/J6 swaps reworked so they can't be
+seen (J4 pushes into the star until only lancet I is in frame, swaps in its white-out; J5 and J6 swap in a moment of full
+dark, `GX.blackout`; J3 guarded the same way). Newcomer-review changes done: captions 02 (Gen 2:17), 03 (Gen 9:11),
+04 ("descendants"), 05 (Ex 13:21); chapter names on the banderole in each tail ("第二扇窗 · 伊甸" …, the first in
+00-title); opening card `00-title`, end card `08-end` ("未完 · 待續 / 下一扇窗 · 新約"). Next: user review of the
+film; then poster, delete the B variants and j* dev clips, sign off. Renders per clip in `out/` (not in git).
 Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
 
 ## Decisions (locked)
@@ -21,7 +22,7 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   (clip seconds, placed at the clip's start), pipe organ + alto recorder + harp, D Dorian, 80 BPM (0.75 s/beat); the
   glass foley (sfx) carries the chimes/bells, so scores play around those notes (e.g. the recorder an octave under the
   day notes). Unscored clips get a quiet drone. The picture is the master: music is written to the cues.
-- **Chapters:** 7 (≈ 2:00), approved 2026-09-29.
+- **Chapters:** 7 (≈ 2:00), approved 2026-09-29; plus `00-title` (opening card) and `08-end` (end card), Sprint 6.
 - **Hall look (darker, sacred):** `amb` ≈ .075 after sunrise, `ambCol [.62,.64,.82]`, `spill .5` (glow thrown on the
   wall by lit panes, new compositor uniform), `contrast .22`, `vign .62`, `haze .45`, `raysK .55`. Title: `gild .18`
   with the sweep light parked on the carving (`sweep [0, 700, .55, BOT+166]`). Before/after: `docs/look-compare.png`.
@@ -50,7 +51,7 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   the film's plain cut is invisible; the day moves on in one hall. Joints (A = draft): J1 cloud shadow / light wipe ·
   J2 rain in the dark / light through Eden's crack · J3 sunset on the floor → tilt up to Abraham / the bow darkens ·
   J4 one star becomes the pillar of fire / truck in the dark · J5 dawn band wipes to Goliath / dark truck · J6 sunset
-  slides off, the moon / dark cut. Music rings ≤1.2 s across a joint (`RING`), plus a bridge chord and J-cut foley.
+  slides off, the moon / dark cut. **Picked: all A** (user, 2026-09-30). Music rings ≤1.2 s across a joint (`RING`), plus a bridge chord and J-cut foley.
 - **Carved title:** `FIAT · LVX` (Gen 1:3, Vulgate), `GX.TITLE`, on the string course in every chapter (GX.light default).
 
 ## Sprints
@@ -117,9 +118,10 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   `camMix`. Zero-length fades: `fadeIn [-1, 0]`, `fade [d, d]` (seg of an empty range is ±Infinity → clamped, safe for t < d).
 - Joint dev clips `j1`…`j6`: the tail of N (1 s before t0) + 2 s of N+1, variant A then B (`window.JV`); preview with
   `--every .25 --w 240 --cols 8`, render `--silent` (~20 s each).
-- A glass swap must happen where it can't be seen: in the dark (`dark` k ≳ .8, and keep the band off: J2 once slid in
+- A glass swap must happen where it can't be seen (the user spots any figure changing in dim light): in the dark (`dark` k ≳ .8, and keep the band off: J2 once slid in
   from the left and lit lancet I on the old glass), under a white-out (`expo` up), or just before a moving band reaches
-  the lancet (swap at band x > LX[i] − 330).
+  the lancet (swap at band x > LX[i] − 330), or with every other lancet out of frame. Safest: `GX.blackout(st, k)` (glass fully
+  unlit at k 1) for ~0.3 s around the swap; a band that starts on a lancet must leave the window first.
 - True peak: the crack's first snap is limited by loudnorm and AAC overshoots it (06 hit the check at −0.2 dBTP); `crack`
   takes `snap` (scale of the transient only) — 06 uses `{ v: 1.3, snap: .25 }`.
 - Sprint 4 changes vs the board: David — Israel's tents (I), the brook + five stones (II); the stone is a point of

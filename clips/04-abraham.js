@@ -5,12 +5,13 @@
 window.CLIP = {
   id: '04-abraham',
   uses: ['_glass', '05-exodus'],
-  duration: 17.2,
-  timing: { fadeIn: [-1, 0], fade: [17.2, 17.2] },   // no fades: the joints hand the picture over (Sprint 6)
+  duration: 18,
+  timing: { fadeIn: [-1, 0], fade: [18, 18] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
     [0.9, 4.9, 'Look now toward heaven, and tell the stars, if thou be able to number them.', '你向天觀看，數算眾星，能數得過來麼？'],
-    [5.8, 8.9, 'So shall thy seed be.', '你的後裔將要如此。'],
+    [5.8, 8.9, 'So shall thy descendants be.', '你的後裔將要如此。'],
     [9.8, 14.0, 'And he believed in the LORD; and he counted it to him for righteousness.', '亞伯蘭信耶和華，耶和華就以此為他的義。'],
+    [14.5, 17.4, 'The Fifth Window · Exodus', '第五扇窗 · 出埃及'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   T: { up: 1.6, first: 1.8, pull: 5.6, many: 6.4, wide: 11.6 },
   // J4 · "so shall thy seed be" → that people, fleeing: one star in lancet I becomes the pillar of fire
@@ -18,11 +19,16 @@ window.CLIP = {
     // A · a star becomes fire: the sky goes out but one star low in lancet I, which warms and swells; under its glare
     // the window becomes the night of the Exodus and the camera arrives on the pillar
     A(E, a, b, u) {
-      const { ss, seg, lerp, LX } = E, GX = window.GX, on = ss(seg(u, .05, .25)), grow = ss(seg(u, .3, .55)), off = ss(seg(u, .55, .95));
-      const o = GX.mixState(GX.dark(a, ss(seg(u, 0, .45))), GX.dark(b, 1 - ss(seg(u, .5, 1))), ss(seg(u, .05, 1)), () => u >= .5);
-      // the star: small and white, alone as the sky goes out; it warms and swells into the fire's glow
+      const { ss, seg, lerp, LX } = E, GX = window.GX, on = ss(seg(u, .04, .2)), grow = ss(seg(u, .25, .5)), off = ss(seg(u, .6, .95));
+      const o = GX.mixState(GX.dark(a, ss(seg(u, 0, .4))), GX.dark(b, 1 - ss(seg(u, .56, 1))), ss(seg(u, .05, 1)), () => u >= .54);
+      // the camera pushes into the star until only lancet I is in frame (the others leave it), holds in its glare while
+      // the glass changes, and pulls back from the fire to the pillar and Moses
+      const C = [LX[0] - 50, 380, 4.4];
+      o.cam = u < .48 ? GX.camMix(a.cam, C, ss(seg(u, 0, .48))) : u < .6 ? C : GX.camMix(C, b.cam, ss(seg(u, .6, 1)));
+      // the star: small and white, alone as the sky goes out; it warms and swells into the fire's glow, a white-out
       const col = [1, lerp(.95, .66, grow), lerp(.85, .3, grow)];
-      o.pts = [[LX[0] + 30, 380, lerp(10, 280, grow), lerp(7, 4, grow) * on * (1 - off), col], ...o.pts].slice(0, 4);
+      o.pts = [[LX[0] + 30, 380, lerp(10, 300, grow), lerp(7, 4, grow) * on * (1 - off), col], ...o.pts].slice(0, 4);
+      o.expo = 1.1 + 4 * Math.pow(Math.sin(Math.PI * seg(u, .42, .66)), 3);
       return o;
     },
     // B · into the dark: the moonlight closes, the camera trucks left to lancet I in the dark, the fire lights

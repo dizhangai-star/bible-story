@@ -13,6 +13,7 @@ window.CLIP = {
     [0.8, 4.9, 'And there went out a champion out of the camp of the Philistines, named Goliath.', '從非利士營中出來一個討戰的人，名叫歌利亞。'],
     [6.2, 9.4, 'I come to thee in the name of the LORD of hosts.', '我來攻擊你，是靠著萬軍之耶和華的名。'],
     [12.0, 15.2, 'So David prevailed over the Philistine with a sling and with a stone.', '這樣，大衛用機弦甩石，勝了那非利士人。'],
+    [15.8, 18.0, 'The Seventh Window · The Promise', '第七扇窗 · 應許'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   // the giant's low bell and spear; the whip (air); the sling whirs (rising glass); the stone flies; the crack — then
   // silence until the light opens (bell)
@@ -28,9 +29,9 @@ window.CLIP = {
     A(E, a, b, u) {
       const { ss, seg, key, lerp, SUN } = E, GX = window.GX, s = ss(seg(u, .05, .6));
       const eve = { ...a, sunCol: key(u, [[0, a.sunCol], [.3, SUN.dusk], [.6, [.8, .4, .45]]]), sunU: lerp(a.sunU, -2700, s), sunI: a.sunI * (1 - .4 * s) };
-      const o = GX.mixState(eve, GX.dark(b, 1 - ss(seg(u, .62, 1))), ss(seg(u, .55, 1)), (i) => u >= .6 + i * .02);
+      const o = GX.mixState(eve, GX.dark(b, 1 - ss(seg(u, .66, 1))), ss(seg(u, .55, 1)), () => u >= .6);
       o.cam = GX.camMix(a.cam, b.cam, ss(u));
-      return o;
+      return GX.blackout(o, Math.sin(Math.PI * seg(u, .5, .7)));   // a moment of full dark: the glass changes there
     },
     // B · into the dark: the light fades while the camera pulls back; the moon comes on the new glass
     B(E, a, b, u) {

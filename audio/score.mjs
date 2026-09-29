@@ -7,6 +7,14 @@
 import { panG, hz, voices } from '../../_kit/audio/dsp.mjs';
 
 const SCORES = {
+  // Opening card: an open D in the dark under the title (the glass note at 0.9 is its spark), gone before 01's spark.
+  '00-title'({ organ, harp }) {
+    organ(.6, 5.0, [38, 45], .016, { atk: 2.0, amp: (u) => 1 - .5 * u }); harp(1.6, 62, .06); harp(2.35, 69, .05); harp(3.1, 74, .05);
+  },
+  // End card: after the dawn's D major, a low D and a G that does not resolve (the question stays open).
+  '08-end'({ organ, recorder }) {
+    organ(.4, 5.6, [38, 50, 57], .016, { atk: 1.2 }); organ(2.4, 3.6, [43, 55, 59], .012, { atk: 1.5 }); recorder(2.6, 2.4, 71, .035);
+  },
   // Darkness; the glass foley has the spark (0.8), the six day notes D5…B5 and the bell on the light (7.0).
   '01-genesis'({ organ, recorder, harp }, A) {
     organ(1.0, 6.0, [38, 45], .028, { atk: 2.5, amp: (u) => .5 + .5 * u });                    // drone grows under the days

@@ -240,6 +240,11 @@ window.GX = {
     const f = 1 - k;
     return { ...s, sunI: s.sunI * f, skyI: s.skyI * (1 - .6 * k), roseI: s.roseI * (1 - .8 * k), amb: s.amb * (1 - .35 * k), pts: this.fadePts(s.pts, f) };
   },
+  // the hall blacked out (the glass shows nothing at k 1, the stone barely): a swap here is never seen
+  blackout(s, k) {
+    const f = 1 - k;
+    return { ...s, sunI: s.sunI * f, skyI: s.skyI * f, roseI: s.roseI * f, amb: s.amb * (1 - .7 * k), pts: this.fadePts(s.pts, f) };
+  },
   // pose: an FPOSE name, or [a, b, u] = blend of two poses (angles mixed, face switches at u .5); u is stepped by the caller
   pose(E, p) {
     if (typeof p === 'string') return E.FPOSE[p];

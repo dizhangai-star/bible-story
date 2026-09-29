@@ -10,6 +10,7 @@ window.CLIP = {
     [1.2, 4.9, 'In the beginning God created the heaven and the earth.', '起初，神創造天地。'],
     [5.5, 9.1, 'And God said, Let there be light: and there was light.', '神說：「要有光」，就有了光。'],
     [10.8, 14.0, 'And God saw every thing that he had made, and, behold, it was very good.', '神看著一切所造的都甚好。'],
+    [14.5, 16.9, 'The Second Window · Eden', '第二扇窗 · 伊甸'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   // glass notes climb D Dorian, one per day; the light lands with a bell; air on the light move and the title sweep
   sfx: [[0.8, 'glass', { m: 86, v: 1.2 }], [2.4, 'glass', { m: 74 }], [3.15, 'glass', { m: 76 }], [3.9, 'glass', { m: 77 }],

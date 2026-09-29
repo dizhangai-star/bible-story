@@ -1,7 +1,7 @@
 // j4 · joint dev clip (Sprint 6): 04-abraham's tail (from 1 s before the joint) + 05-exodus's first 2 s, variant A, then
 // the same with variant B. Review: node preview.mjs j4 --every .25 --w 320 --cols 8 · render: node render.mjs j4 --silent
 window.CLIP = (() => {
-  const A = '04-abraham', B = '05-exodus', L = 4, POST = 2, ONE = L + POST;
+  const A = '04-abraham', B = '05-exodus', L = 4.8, POST = 2, ONE = L + POST;
   const C = () => window.CLIPS || {};
   const part = (t) => { const v = t < ONE ? 'A' : 'B', u = t - (v === 'B' ? ONE : 0), a = C()[A]; return { v, u, a, b: C()[B], ta: a ? a.duration - L + u : 0 }; };
   return {
