@@ -3,10 +3,10 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Sprint 2 (02-eden 18 s, 03-flood 20 s) SIGNED OFF by the user 2026-09-30.** Paused; next is **Sprint 3 ·
-04-abraham, 05-exodus** when the user says go: shots from `clips/board.js` + TREATMENT §4, built as ONE continuous
-camera per chapter (see Decisions), review with preview grids, then render each clip (`render.mjs <id> --silent`) and
-send the single mp4s — do NOT compile the whole film until the delivery sprint. User is making the Suno track (SUNO.md).
+**Sprint 3 (04-abraham 15 s, 05-exodus 18 s) drafted 2026-09-30, awaiting the user's review** (`out/04-abraham.mp4`,
+`out/05-exodus.mp4`, silent). After sign-off: **Sprint 4 · 06-david, 07-promise**, same method — shots from
+`clips/board.js` + TREATMENT §4, ONE continuous camera per chapter, preview grids, then `render.mjs <id> --silent` and
+send the single mp4s (no full compile until delivery). User is making the Suno track (SUNO.md).
 Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
 
 ## Decisions (locked)
@@ -42,7 +42,7 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 ## Sprints
 - [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames, SUNO.md
 - [x] **1 · Cast sheet v2 · storyboard v1 · glass colour + rose** — signed off 2026-09-29
-- [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [ ] **3 · 04-abraham, 05-exodus** · [ ] **4 · 06-david, 07-promise**
+- [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [~] **3 · 04-abraham, 05-exodus** — draft 2026-09-30 · [ ] **4 · 06-david, 07-promise**
 - [ ] **5 · Sound**: Suno track in, retime cuts to its beats, foley pass, mix
 - [ ] **6 · Deliver**: chapter transitions (see Decisions), compile, check, srt, poster
 
@@ -79,3 +79,13 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 - After the light leaves a window keep `skyI` ≈ .08 and `amb` ≈ .045, or the figures vanish instead of "freezing in the dark".
 - Content callbacks run at render time, after `state()`: compute anything `pts` needs (hand, fruit) as world
   constants, found with a `--crop` preview, not from inside the painter.
+- Sprint 3 changes vs the board: Abraham opens low and close (feet/hill) and tilts up with his gaze; a narrow moonbeam
+  on lancet II opens over the whole window during the pull back. The abraham glass key has no gold (accent/pearls
+  night/violet) so the stars (`GX.star(..., col)`, white/pale-gold flat pinholes, ~600, lit in distance order) are the
+  only light-coloured glass. Exodus: the fire is the only light — the sun band covers I (pillar) + II (Moses, "light
+  to these") and opens rightward over the sea as it parts; `pts` add the fire glow (2) + Moses' rays (world −172, 318).
+  Moses uses `stretch` (arm forward-up, defined in the clip): `raiseStaff` hides his face. The sea: five water bands
+  per side over a sand road, sliding apart and heaping into walls; road half-width grows with y (perspective); Israel
+  walks up the road shrinking. `GX.KEYS[k].pearl` = optional pearl families.
+- `preview --crop` is in logical SCREEN units (640×360), not world: convert with the camera (x = cam.x + (3·sx − 960)/zoom).
+- Only 4 `pts` point lights per frame (comp.js uniform array).
