@@ -3,9 +3,10 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Sprint 1 (cast · storyboard · glass look) SIGNED OFF by the user 2026-09-29.** Paused; next is **Sprint 2 ·
-02-eden, 03-flood** when the user says go: build each chapter clip from its shots in `clips/board.js` (key-frame state
-per shot) + TREATMENT §4, then a silent draft for review. User is making the Suno track (SUNO.md).
+**Sprint 2 (02-eden 18 s, 03-flood 20 s) SIGNED OFF by the user 2026-09-30.** Paused; next is **Sprint 3 ·
+04-abraham, 05-exodus** when the user says go: shots from `clips/board.js` + TREATMENT §4, built as ONE continuous
+camera per chapter (see Decisions), review with preview grids, then render each clip (`render.mjs <id> --silent`) and
+send the single mp4s — do NOT compile the whole film until the delivery sprint. User is making the Suno track (SUNO.md).
 Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
 
 ## Decisions (locked)
@@ -27,13 +28,23 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   clockwise from the top) + a 36-piece jewel ring; every rose part has `.petal` for day-by-day lighting.
 - **Storyboard (approved):** TREATMENT.md §4 / `docs/storyboard.png`; Exodus at night.
 - **God is never drawn; God is the light.** Art all drawn in code.
+- **Camera inside a chapter: continuous, no hard cuts between beats** (user, 2026-09-30): link beats with a slow push /
+  hold / pull back so the progression reads (Eden is one camera: MS → push to the fruit → hold on the crack → pull
+  back as the light leaves). Pose changes are blended in held glass steps, not swapped.
+- **One window per chapter, one glass:** never swap the mosaic for flat panes (`GX.bg`) mid-chapter; new content
+  (the bow) is cut over the same quarries. Natural motion (water, a floating ark) moves smoothly on `t`; the 8 fps
+  step stays for figures' poses and wings.
+- **No top-down floor mode** (`floorMode 2`): its blurred projection reads as a different style; show the floor light
+  in the perspective view (Flood ends tilting down and pushing onto the rainbow on the flagstones).
+- **Chapter transitions:** more than a fade to black — to design in the delivery sprint (ideas: the camera passes
+  through the lead/stone between windows; a light wipe; the last pane's colour carrying into the next).
 
 ## Sprints
 - [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames, SUNO.md
 - [x] **1 · Cast sheet v2 · storyboard v1 · glass colour + rose** — signed off 2026-09-29
-- [ ] **2 · 02-eden, 03-flood** · [ ] **3 · 04-abraham, 05-exodus** · [ ] **4 · 06-david, 07-promise**
+- [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [ ] **3 · 04-abraham, 05-exodus** · [ ] **4 · 06-david, 07-promise**
 - [ ] **5 · Sound**: Suno track in, retime cuts to its beats, foley pass, mix
-- [ ] **6 · Deliver**: compile, check, srt, poster
+- [ ] **6 · Deliver**: chapter transitions (see Decisions), compile, check, srt, poster
 
 ## How it works
 - `engine.html` imports `sg/*` modules; a clip's `state(t, E, T)` returns the demo's scene state
@@ -42,7 +53,11 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   `caps: [[t0, t1, en, zh]]` and copies the WebGL canvas onto `#cv`.
 - World units: rose (0,-560) r175; lancets `LX = [-510,-170,170,510]`, 300 wide, apex −320, bottom 640; floor 900;
   carved band y 806. Wide framing `[0, 300, .5]` keeps the title clear of the banderole.
-- `clips/_glass.js` (`window.GX`): star, band, serpent, bigTree, ark, rainbow, waves, cracks, drawCracks.
+- `clips/_glass.js` (`window.GX`): star, band, serpent, bigTree, ark, rainbow, waves, cracks, drawCracks; shared scene
+  helpers `light(E, 'dawn|noon|aft|dusk|night', o)`, `pose(E, name | [a, b, u])` (pose blend, face flips at .5),
+  `fig(E, P, cx, base, who, pose, x, s, flip, castOverrides)`, `bg`, `garden`, `rain` (board.js delegates to them).
+- Chapter clip pattern: `panes(E, t)` builds the four lancets for time t; `state(t, E)` picks the shot by t
+  (hard cuts = `if` on t, moves = `key`), then sets `lancets`, `pts`, `time`. Figures move on `step(t)` (8 fps).
 - `clips/sf.js`: style frames (dev clip). Sfx kinds in `audio/music.mjs`: glass {m}, crack, air {d}, bell {m}.
 
 ## Notes
@@ -55,3 +70,12 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 - Unlit rose pieces: dim transmittance to ~3 % (`rose.lit`), otherwise the petals don't read as lighting one by one.
 - Serpent on a green crown disappears (colour on colour): serpent is gold/umber.
 - `compile.mjs --out` skips the film mix; for a one-clip sample use `out/<id>.mp4` (it has the film track slice).
+- Sprint 2 changes vs the board: Eve and the tree moved right in lancet III (her offering hand was clipped by the
+  lancet border); the Eden crack starts at the fruit (66, 400) and the CU holds through it (no cut); after the fall
+  both figures blend offer → `weep` (the fruit drops halfway). The serpent sits right of Eve (cx + 128),
+  otherwise her body hides it. Flood lancet IV is stormy water, not a rainbow: the bow only appears at the turn (03-4),
+  band by band (`GX.rainbow(..., n)`), over all four lancets while the rain fades and the water falls. Noah's hands (dove landing) are at world (245, 400).
+  The dove painter faces right: mirror it (`scale(-s, s)`) when it flies left.
+- After the light leaves a window keep `skyI` ≈ .08 and `amb` ≈ .045, or the figures vanish instead of "freezing in the dark".
+- Content callbacks run at render time, after `state()`: compute anything `pts` needs (hand, fruit) as world
+  constants, found with a `--crop` preview, not from inside the painter.

@@ -47,22 +47,12 @@ window.CLIP = {
     return st;
   },
 
-  // ---------- light presets (the darker hall look) ----------
-  light(E, k, o = {}) {
-    const { SUN } = E;
-    const P = { dawn: [SUN.dawn, 2.2, .42, 1.5], noon: [SUN.noon, 2.7, .06, .62], aft: [SUN.aft, 2.35, -.36, 1.3], dusk: [SUN.dusk, 2.6, -.55, 2.1], night: [SUN.moon, .6, 0, 1.2] }[k];
-    return { sunCol: P[0], sunI: P[1], sx: P[2], sz: P[3], sunU: 0, bandW: 3200, skyI: k === 'night' ? .05 : .1, skyCol: [.55, .65, .9],
-      amb: k === 'night' ? .05 : .075, ambCol: [.62, .64, .82], spill: .5, contrast: .22, vign: .6, haze: .45, raysK: .55,
-      roseI: k === 'night' ? .15 : .8, floorMode: 1, floor: { camD: 2600, eyeH: 320 }, time: 3, ...o };
-  },
+  light(E, k, o) { return window.GX.light(E, k, o); },
+  fig(E, P, cx, base, who, pose, x, s, flip) { window.GX.fig(E, P, cx, base, who, pose, x, s, flip); },
+  bg(E, P, cx, col, id) { window.GX.bg(E, P, cx, col, id); },
+  garden(E, P, cx, id) { window.GX.garden(E, P, cx, id); },
 
   // ---------- pane painters ----------
-  fig(E, P, cx, base, who, pose, x, s, flip) {
-    const p = E.FPOSE[pose];
-    E.drawFigure(P, base.translate(cx + x, 604 - 182 * s + (p.rootDy || 0) * s).scale(flip ? -s : s, s), p, E.CAST[who]);
-  },
-  bg(E, P, cx, col, id) { P.piece(new Path2D(`M${cx - 160} -400 H${cx + 160} V660 H${cx - 160} Z`), col, { id, lead: 0, mat: false }); },
-  garden(E, P, cx, id) { E.hills(P, cx, 540, [{ y: -10, a: 12, ph: id % 7, c: E.COL.olive }, { y: 40, a: 8, ph: 3, c: E.COL.green2 }], id); },
   stars(E, P, cx, id, n = 18) {
     const r = E.mulberry(id);
     for (let k = 0; k < n; k++) window.GX.star(E, P, cx - 120 + r() * 240, -260 + r() * 640, 5 + r() * 8, id + 1 + k);
