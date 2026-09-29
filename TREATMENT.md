@@ -22,16 +22,51 @@ Hook (0.8 s): one spark in the black rose. Native move at the peak: crack → re
 - **Beauty and the Beast (1991) prologue**: telling a back-story window by window. *Learn:* camera moving between
   panes, patient holds. *Don't take:* compositions, characters, music.
 
-## 4. Clip list (proposal — sample = 01)
-| # | id | s | shot (size · angle · move) | action | caption (繁 / EN) | sound |
-|---|----|---|---|---|---|---|
-| 1 | 01-genesis | 15 | ECU rose, eye level · slow pull back → tilt down to wide · slow push | spark; 6 petal pairs light (six days); sun band sweeps 4 lancets (light · waters · land · life); title lit | Gen 1:1 · 1:3 · 1:31 | glass notes up D Dorian, bell at 7.0 |
-| 2 | 02-eden | 17 | MCU lancet · static → slow push on the fruit | Adam & Eve, tree, serpent; fruit taken → **first crack**; light leaves the pane, figures freeze | Gen 3:4 · 3:23 | near-silence → crack, **hard stop** |
-| 3 | 03-flood | 18 | wide → tilt down → **top-down on the floor** | blue pieces slide up the leads; ark rides; dove + olive leaf; rainbow thrown on the stones | Gen 7:17 · 9:13 | water glass, dove wings |
-| 4 | 04-abraham | 12 | low angle, slow tilt up | night pane; stars are pinholes of light; Abraham looks up | Gen 15:5 | chimes, hush |
-| 5 | 05-exodus | 18 | wide, truck right | Red Sea pieces slide apart along the leads; pillar of fire = light inside the glass | Ex 14:21 | grind of glass on lead, organ build |
-| 6 | 06-david | 14 | low angle on Goliath · whip to David · crack | the armoured giant (knight rig); one stone → crack runs through him | 1 Sam 17:45 | timpani, crack, silence |
-| 7 | 07-promise | 15 | wide night · push to the lamp · pull back | cracks mended with lead (weld sparks on beats); one lamp pane glows; dawn ray echoes 01 | Isa 9:2 | single long bell, recorder reprise |
+## 4. Storyboard (approved 2026-09-29) — 7 chapters · 24 shots · ≈ 2:00
+![storyboard](docs/storyboard.png)
+
+Rendered with the real engine by `clips/board.js` + `node tools/storyboard.mjs` → `docs/storyboard.png`
+(`board.js` also holds each shot's key-frame state: camera, light, panes; start each chapter clip from it).
+Camera = a 2D view of the window wall (`cam [x, y, zoom]`) + perspective floor + a top-down floor cut; the sun band
+is the second camera (only the lit pane is alive). Rule: **one camera move + one action per shot**.
+One window per chapter; chapters cut through the unlit window (black), so clips fade in/out.
+
+| shot | size / angle | camera | light | beat / mood |
+|---|---|---|---|---|
+| **01 起初 Genesis** | | | | |
+| 01-1 | rose, ECU | slow pull back | a spark in total dark | "In the beginning" · still, suspense |
+| 01-2 | whole rose | keep pulling | petals light in pairs = six days | creation · anticipation |
+| 01-3 | wide, 4 lancets + floor | tilt down → slow push | thin sun band sweeps the lancets, shafts to the floor | "Let there be light" · awe |
+| **02 伊甸 Eden** | | | | |
+| 02-1 | MS, Adam & Eve (lancets II–III) | static | afternoon gold | the garden · calm |
+| 02-2 | CU, Eve's hand and the fruit | slow push to the fruit | light gathers on the fruit | temptation · tension |
+| 02-3 | same framing, no cut | none — the crack is the event | white flash, light pours through the crack | the first crack · shock (near-silence before, hard stop) |
+| 02-4 | MS | static | the light leaves; the figures freeze in the dark | expulsion · loss |
+| **03 洪水 Flood** | | | | |
+| 03-1 | wide | truck right → | cold blue dawn | the flood · oppression |
+| 03-2 | MS, the ark | static | blue pieces rise lead by lead | surging water |
+| 03-3 | Noah, MCU | slow push | the dove returns to his hands | hope |
+| 03-4 | window → floor | tilt down | noon sun | the turn |
+| 03-5 | **top-down on the floor** | slow push | the rainbow thrown on the flagstones | the covenant · comfort |
+| **04 亞伯拉罕 Abraham** | | | | |
+| 04-1 | low angle, Abraham | slow tilt up | moonlight | smallness |
+| 04-2 | the window full of stars | slow pull back | stars = pinholes of light | "count the stars" · reverence |
+| **05 出埃及 Exodus** — at night, lit by the pillar of fire (Ex 14:20–27) | | | | |
+| 05-1 | wide | truck right → | night; the pillar of fire is the light inside the glass | exodus · pursuit |
+| 05-2 | MS, Moses raising the rod | static | the rays on his head light up | authority |
+| 05-3 | extreme wide | slow pull back | the sea's pieces slide apart along the leads | the miracle |
+| **06 大衛 David** | | | | |
+| 06-1 | low angle, Goliath | slow push | top light pressing down | fear |
+| 06-2 | David, small | whip pan ← | backlight | courage |
+| 06-3 | Goliath, MS | static | the stone hits → a crack runs through the giant; silence | reversal |
+| **07 應許 Promise** | | | | |
+| 07-1 | night, extreme wide | static | moonlight only | promise · stillness |
+| 07-2 | CU, the cracks | truck pane to pane → | new lead welds on, sparks on the beat | mending |
+| 07-3 | the lamp's pane | slow push | the pane shines by its own light | hope |
+| 07-4 | back to 01's wide, same framing | pull back | a pale dawn ray touches the first pane again | echo of the opening |
+
+Rhythm: slow (01, 04) · building (03, 05) · fastest (06, one whip pan). Near-silences: before 02-3 and before the
+last bell in 07. 07-4 repeats 01-3's framing: light from outside becomes light from within.
 
 ## 5. Beat sheet — 01-genesis (80 BPM, 0.75 s/beat)
 | t | picture | caption | sound |

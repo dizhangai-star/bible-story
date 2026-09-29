@@ -3,7 +3,8 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**PAUSED by the user (2026-09-29) before Sprint 2.** Cast sheet v2 **approved** (iconography pass, see Notes): `frames/castsheet.png` (also `docs/`), dev clip
+**PAUSED by the user (2026-09-29) before Sprint 2.** Storyboard v1 **approved** → TREATMENT.md §4 (`docs/storyboard.png`,
+`clips/board.js` holds every shot's key-frame state; start chapter clips from it). Exodus is at night (pillar of fire). Cast sheet v2 **approved** (iconography pass, see Notes): `frames/castsheet.png` (also `docs/`), dev clip
 `clips/cast.js`, rig `sg/figure.js` (costumes in `CAST`, poses in `FPOSE`). After approval: **Sprint 2 · 02-eden,
 03-flood** (see TREATMENT clip list), then compile a silent draft for review. User is making the Suno track.
 Sample approved; darker hall look approved (user left it to Claude; see Decisions). Code on GitHub:
