@@ -24,7 +24,7 @@ window.CLIP = {
   T: { whip: 5.2, onDavid: 5.9, spin: 6.2, release: 9.4, hit: 10.0, fall: 10.7, pull: 12.2, wide: 15.2 },
   // J6 · the giant fallen → the night of the promise: the day ends, the camera pulls back to the opening wide
   J: { next: '07-promise', t0: 15.3,
-    // A · sunset: the light reddens and slides off the window right to left (as it left Eden); in the dark the glass
+    // sunset: the light reddens and slides off the window right to left (as it left Eden); in the dark the glass
     // becomes the promise's window, and the moon comes
     A(E, a, b, u) {
       const { ss, seg, key, lerp, SUN } = E, GX = window.GX, s = ss(seg(u, .05, .6));
@@ -32,11 +32,6 @@ window.CLIP = {
       const o = GX.mixState(eve, GX.dark(b, 1 - ss(seg(u, .66, 1))), ss(seg(u, .55, 1)), () => u >= .6);
       o.cam = GX.camMix(a.cam, b.cam, ss(u));
       return GX.blackout(o, Math.sin(Math.PI * seg(u, .5, .7)));   // a moment of full dark: the glass changes there
-    },
-    // B · into the dark: the light fades while the camera pulls back; the moon comes on the new glass
-    B(E, a, b, u) {
-      const { ss, seg } = E, GX = window.GX;
-      return GX.mixState(GX.dark(a, ss(seg(u, 0, .45))), GX.dark(b, 1 - ss(seg(u, .55, 1))), ss(u), () => u >= .5);
     } },
   HAND: [215, 420],    // David's sling hand at the release (world)
   BROW: [522, 282],    // Goliath's brow: the stone strikes here, the crack starts here

@@ -21,19 +21,10 @@ window.CLIP = {
   T_LIGHT: 7.0,
   // J1 · the made world → the garden in it: the wide pushes in to 02's MS while the window is re-glazed
   J: { next: '02-eden', t0: 14.2,
-    // A · cloud: a cloud's shadow passes over the window; under it the glass becomes the garden, the light warms
+    // cloud: a cloud's shadow passes over the window; under it the glass becomes the garden, the light warms
     A(E, a, b, u) {
       const { ss, seg } = E, GX = window.GX, c = Math.sin(Math.PI * seg(u, .12, .9));
       const o = GX.mixState(GX.dark(a, .75 * c), GX.dark(b, .75 * c), ss(seg(u, .05, 1)), (i) => u >= .47 + i * .02);
-      return o;
-    },
-    // B · light wipe: the sun narrows to a band that crosses the window left to right, re-glazing each lancet it
-    // passes; then it opens over the garden
-    B(E, a, b, u) {
-      const { ss, seg, key, LX } = E, GX = window.GX, x = key(u, [[0, a.sunU], [.15, LX[0] - 240], [.72, LX[3]]]);
-      const o = GX.mixState(a, b, ss(seg(u, .05, 1)), (i) => x > LX[i] - 330);   // each lancet is re-glazed while still dark, just before the band reaches it
-      o.bandW = key(u, [[0, a.bandW], [.15, 360], [.72, 360], [1, b.bandW]]);
-      o.sunU = u < .72 ? x : E.lerp(LX[3] + 180 - o.bandW / 2, b.sunU, ss(seg(u, .9, 1)));   // opens leftward from IV
       return o;
     } },
 

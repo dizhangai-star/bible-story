@@ -24,7 +24,7 @@ window.CLIP = {
   T: { moses: 4.8, raise: 5.3, rays: 6.8, pull: 8.2, part: 8.6, open: 12.4, walk: 11.0, wide: 15.2 },
   // J5 · the crossing → the valley of Elah (night → day): "the sea returned at the morning appearing" (Ex 14:27)
   J: { next: '06-david', t0: 17.0,
-    // A · dawn over the sea: the fire goes out, a pale dawn band crosses the window left to right, re-glazing each
+    // dawn over the sea: the fire goes out, a pale dawn band crosses the window left to right, re-glazing each
     // lancet before it reaches it, warms to afternoon and settles on Goliath's lancet as the camera trucks to him
     A(E, a, b, u) {
       const { ss, seg, key, LX } = E, GX = window.GX;
@@ -36,11 +36,6 @@ window.CLIP = {
       o.sunU = x; o.bandW = key(u, [[0, a.bandW], [.28, 380], [.88, 380], [1, b.bandW]]);
       o.sunCol = key(u, [[0, a.sunCol], [.3, [.8, .6, .6]], [.55, [.8, .86, 1]], [1, b.sunCol]]);
       return o;
-    },
-    // B · the fire dies: dark, the camera trucks right to lancet IV, the light presses down on the giant
-    B(E, a, b, u) {
-      const { ss, seg } = E, GX = window.GX;
-      return GX.mixState(GX.dark(a, ss(seg(u, 0, .45))), GX.dark(b, 1 - ss(seg(u, .55, 1))), ss(u), () => u >= .5);
     } },
   HEAD: [-172, 318],   // Moses' head (world): the rays light here
 

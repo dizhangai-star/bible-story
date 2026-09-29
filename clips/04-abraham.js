@@ -16,7 +16,7 @@ window.CLIP = {
   T: { up: 1.6, first: 1.8, pull: 5.6, many: 6.4, wide: 11.6 },
   // J4 · "so shall thy seed be" → that people, fleeing: one star in lancet I becomes the pillar of fire
   J: { next: '05-exodus', t0: 14.2,
-    // A · a star becomes fire: the sky goes out but one star low in lancet I, which warms and swells; under its glare
+    // a star becomes fire: the sky goes out but one star low in lancet I, which warms and swells; under its glare
     // the window becomes the night of the Exodus and the camera arrives on the pillar
     A(E, a, b, u) {
       const { ss, seg, lerp, LX } = E, GX = window.GX, on = ss(seg(u, .04, .2)), grow = ss(seg(u, .25, .5)), off = ss(seg(u, .6, .95));
@@ -30,11 +30,6 @@ window.CLIP = {
       o.pts = [[LX[0] + 30, 380, lerp(10, 300, grow), lerp(7, 4, grow) * on * (1 - off), col], ...o.pts].slice(0, 4);
       o.expo = 1.1 + 4 * Math.pow(Math.sin(Math.PI * seg(u, .42, .66)), 3);
       return o;
-    },
-    // B · into the dark: the moonlight closes, the camera trucks left to lancet I in the dark, the fire lights
-    B(E, a, b, u) {
-      const { ss, seg } = E, GX = window.GX;
-      return GX.mixState(GX.dark(a, ss(seg(u, 0, .45))), GX.dark(b, 1 - ss(seg(u, .55, 1))), ss(u), () => u >= .5);
     } },
   N0: 11,   // the first stars, lit one by one above Abraham
 

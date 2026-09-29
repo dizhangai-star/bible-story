@@ -3,12 +3,10 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Sprint 6 · Deliver, in review (2026-09-30):** user picked **all A** joints; J4/J5/J6 swaps reworked so they can't be
-seen (J4 pushes into the star until only lancet I is in frame, swaps in its white-out; J5 and J6 swap in a moment of full
-dark, `GX.blackout`; J3 guarded the same way). Newcomer-review changes done: captions 02 (Gen 2:17), 03 (Gen 9:11),
-04 ("descendants"), 05 (Ex 13:21); chapter names on the banderole in each tail ("第二扇窗 · 伊甸" …, the first in
-00-title); opening card `00-title`, end card `08-end` ("未完 · 待續 / 下一扇窗 · 新約"). Next: user review of the
-film; then poster, delete the B variants and j* dev clips, sign off. Renders per clip in `out/` (not in git).
+**FINISHED — Sprint 6 signed off by the user 2026-09-30.** Film: `out/bible-story.mp4` (150.7 s, 9 clips: 00-title,
+01–07, 08-end; −16 LUFS, true peak −1.4 dBTP, check OK), subtitles `out/bible-story.srt`, poster `out/poster.png`
+(dev clip `clips/poster.js`). Joints all variant A (B variants and the j1–j6 dev clips deleted). Renders not in git.
+Possible follow-ups: a New Testament film ("下一扇窗 · 新約", the end card's promise).
 Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
 
 ## Decisions (locked)
@@ -59,7 +57,7 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 - [x] **1 · Cast sheet v2 · storyboard v1 · glass colour + rose** — signed off 2026-09-29
 - [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [x] **3 · 04-abraham, 05-exodus** — signed off 2026-09-30 · [x] **4 · 06-david, 07-promise** — signed off 2026-09-30
 - [ ] **5 · Sound**: code score per clip (`audio/score.mjs`) — [x] 01–07 signed off 2026-09-30; foley pass, mix
-- [ ] **6 · Deliver**: [x] chapter joints (A/B, draft = A) · [x] FIAT LVX · [x] compile + check + srt · [x] newcomer review · [ ] user picks · [ ] captions/cards · [ ] poster
+- [x] **6 · Deliver**: joints (all A) · FIAT LVX · newcomer review → captions, chapter names, opening/end cards · compile, check, srt, poster — signed off 2026-09-30
 
 ## How it works
 - `engine.html` imports `sg/*` modules; a clip's `state(t, E, T)` returns the demo's scene state
@@ -113,11 +111,11 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 - `preview --crop` is in logical SCREEN units (640×360), not world: convert with the camera (x = cam.x + (3·sx − 960)/zoom).
 - Only 4 `pts` point lights per frame (comp.js uniform array).
 - Joints: every chapter file ends by registering itself in `window.CLIPS`; a chapter `uses` the next one; `J = { next,
-  t0, A(E, a, b, u, t), B(…) }` and `state` returns `GX.joint(E, this, st, t)`. Helpers in `_glass.js`: `mixState(a, b,
+  t0, A(E, a, b, u, t) }` and `state` returns `GX.joint(E, this, st, t)`. Helpers in `_glass.js`: `mixState(a, b,
   u, take(i))` (numbers mix, cam in log zoom, pts cross-fade, lancet i from b when take(i)), `dark(st, k)` (the unlit hall),
   `camMix`. Zero-length fades: `fadeIn [-1, 0]`, `fade [d, d]` (seg of an empty range is ±Infinity → clamped, safe for t < d).
-- Joint dev clips `j1`…`j6`: the tail of N (1 s before t0) + 2 s of N+1, variant A then B (`window.JV`); preview with
-  `--every .25 --w 240 --cols 8`, render `--silent` (~20 s each).
+- To review a joint: `node preview.mjs <N> <t0-1> … --w 240` over the tail, then the first 2 s of N+1 (the Sprint 6 joint
+  dev clips j1–j6, which played both, were deleted at sign-off; see git history f45bdcd to restore one).
 - A glass swap must happen where it can't be seen (the user spots any figure changing in dim light): in the dark (`dark` k ≳ .8, and keep the band off: J2 once slid in
   from the left and lit lancet I on the old glass), under a white-out (`expo` up), or just before a moving band reaches
   the lancet (swap at band x > LX[i] − 330), or with every other lancet out of frame. Safest: `GX.blackout(st, k)` (glass fully

@@ -22,19 +22,10 @@ window.CLIP = {
   T: { push: 3.0, crack: 10.2, turn: 10.8, pull: 11.2, out: 12.2 },
   // J2 · the fall → the flood: in the dark after the expulsion the window becomes the storm
   J: { next: '03-flood', t0: 16.9,
-    // A · rain in the dark: the glass changes unlit, the camera pulls back to the wide, rain first, then cold dawn
+    // rain in the dark: the glass changes unlit, the camera pulls back to the wide, rain first, then cold dawn
     A(E, a, b, u) {
       const { ss, seg } = E, GX = window.GX;
       return GX.mixState(GX.dark(a, ss(seg(u, 0, .3))), GX.dark(b, 1 - ss(seg(u, .45, 1))), ss(u), (i) => u >= .3 + i * .03);
-    },
-    // B · light through the wound: push into Eden's crack, cold light pours out of it and becomes the storm's dawn
-    B(E, a, b, u) {
-      const { ss, seg, key } = E, GX = window.GX, [fx, fy] = this.FRUIT, g = Math.sin(Math.PI * seg(u, .12, .82));
-      const o = GX.mixState(a, b, ss(seg(u, .5, 1)), () => u >= .5);
-      o.cam = key(u, [[0, a.cam], [.45, [fx - 10, fy, 2.7]], [.55, [fx - 10, fy, 2.7]], [1, b.cam]]);
-      o.pts = [[fx, fy, 40 + 700 * g, 4.5 * g, [.75, .85, 1]], ...o.pts].slice(0, 4);
-      o.expo = 1.1 + 5 * Math.pow(Math.sin(Math.PI * seg(u, .3, .7)), 3);   // a white-out at the peak hides the change
-      return o;
     } },
   FRUIT: [66, 400],   // world position of the fruit in Eve's raised hand (crack origin, light gathers here)
 

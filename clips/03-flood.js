@@ -23,7 +23,7 @@ window.CLIP = {
   T: { ark: 4.6, rise: 7.8, noah: 8.2, bow: 12.4, top: 16.0 },
   // J3 · the bow → the stars (two signs of a covenant): the day ends on the floor, night comes, up to Abraham
   J: { next: '04-abraham', t0: 19.0,
-    // A · sunset on the floor: the bow's light slides and stretches across the flagstones, reddens and goes out;
+    // sunset on the floor: the bow's light slides and stretches across the flagstones, reddens and goes out;
     // then one tilt up from the floor into lancet II, where the moonbeam finds Abraham
     A(E, a, b, u) {
       const { ss, seg, key, lerp, SUN } = E, GX = window.GX, d = ss(seg(u, 0, .5)), m = ss(seg(u, .55, 1));
@@ -31,14 +31,6 @@ window.CLIP = {
       const o = GX.mixState(GX.dark(eve, ss(seg(u, .25, .55))), GX.dark(b, 1 - m), m, () => u >= .5);
       o.cam = GX.camMix(key(u, [[0, a.cam], [.5, [0, 800, .84]]]), b.cam, ss(seg(u, .5, 1)));
       return GX.blackout(o, Math.sin(Math.PI * seg(u, .42, .58)));   // the lancets' foot is in frame: change them in full dark
-    },
-    // B · the bow's window at dusk: tilt back up to the window, the bow reddens and goes dark, then down to Abraham
-    B(E, a, b, u) {
-      const { ss, seg, key, lerp, SUN } = E, GX = window.GX, d = ss(seg(u, .1, .5)), m = ss(seg(u, .6, 1));
-      const eve = { ...a, sunCol: a.sunCol.map((v, j) => lerp(v, SUN.dusk[j], d)) };
-      const o = GX.mixState(GX.dark(eve, ss(seg(u, .3, .58))), GX.dark(b, 1 - m), m, () => u >= .58);
-      o.cam = GX.camMix(key(u, [[0, a.cam], [.45, [0, 250, .62]], [.6, [0, 240, .64]]]), b.cam, ss(seg(u, .6, 1)));
-      return o;
     } },
   HANDS: [245, 400],   // Noah's raised hands (world), where the dove lands
   LAND: 10.5,   // the dove lands in Noah's hands

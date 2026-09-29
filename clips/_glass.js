@@ -206,13 +206,11 @@ window.GX = {
   // ---------- chapter joints (Sprint 6) ----------
   // A chapter's tail hands the picture to the next chapter's frame 0, so the film's plain cut is invisible. The next
   // chapter is loaded as a `uses` entry and registered in window.CLIPS (last line of every chapter file).
-  // joint(E, A, a, t): past A.J.t0 run the picked variant A.J[v](E, a, b, u, t) with b = next.state(0), u 0→1 over
-  // the tail. The variant is window.JV (joint dev clips), else A.J.pick, else 'A'.
+  // joint(E, A, a, t): past A.J.t0 run A.J.A(E, a, b, u, t) with b = next.state(0), u 0→1 over the tail.
   joint(E, A, a, t) {
     const J = A.J, B = window.CLIPS && window.CLIPS[J.next];
     if (!B || t < J.t0) return a;
-    const b = B.state(0, E), v = window.JV || J.pick || 'A';
-    return J[v].call(A, E, a, b, E.seg(t, J.t0, A.duration), t);
+    return J.A.call(A, E, a, B.state(0, E), E.seg(t, J.t0, A.duration), t);
   },
   // mix two states by u: numbers and number arrays mix (fields one side lacks mix against the renderer's default),
   // cam mixes x, y and log zoom, point lights cross-fade (4 max), anything else switches at u .5.
