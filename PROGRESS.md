@@ -3,8 +3,8 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Sprint 3 (04-abraham 15 s, 05-exodus 18 s) drafted 2026-09-30, awaiting the user's review** (`out/04-abraham.mp4`,
-`out/05-exodus.mp4`, silent). After sign-off: **Sprint 4 · 06-david, 07-promise**, same method — shots from
+**Sprint 3 (04-abraham 15 s, 05-exodus 18 s) SIGNED OFF by the user 2026-09-30.** Paused; next is
+**Sprint 4 · 06-david, 07-promise** when the user says go, same method — shots from
 `clips/board.js` + TREATMENT §4, ONE continuous camera per chapter, preview grids, then `render.mjs <id> --silent` and
 send the single mp4s (no full compile until delivery). User is making the Suno track (SUNO.md).
 Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
@@ -42,7 +42,7 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 ## Sprints
 - [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames, SUNO.md
 - [x] **1 · Cast sheet v2 · storyboard v1 · glass colour + rose** — signed off 2026-09-29
-- [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [~] **3 · 04-abraham, 05-exodus** — draft 2026-09-30 · [ ] **4 · 06-david, 07-promise**
+- [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [x] **3 · 04-abraham, 05-exodus** — signed off 2026-09-30 · [ ] **4 · 06-david, 07-promise**
 - [ ] **5 · Sound**: Suno track in, retime cuts to its beats, foley pass, mix
 - [ ] **6 · Deliver**: chapter transitions (see Decisions), compile, check, srt, poster
 
