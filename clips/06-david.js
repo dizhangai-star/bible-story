@@ -6,9 +6,9 @@
 // Beats (TREATMENT §4), one continuous camera: 06-1 push · 06-2 whip pan ← · 06-3 the stone, the crack, pull back.
 window.CLIP = {
   id: '06-david',
-  uses: ['_glass'],
-  duration: 16,
-  timing: { fadeIn: [0, 0.5], fade: [15.3, 16] },
+  uses: ['_glass', '07-promise'],
+  duration: 18.3,
+  timing: { fadeIn: [-1, 0], fade: [18.3, 18.3] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
     [0.8, 4.9, 'And there went out a champion out of the camp of the Philistines, named Goliath.', '從非利士營中出來一個討戰的人，名叫歌利亞。'],
     [6.2, 9.4, 'I come to thee in the name of the LORD of hosts.', '我來攻擊你，是靠著萬軍之耶和華的名。'],
@@ -18,8 +18,25 @@ window.CLIP = {
   // silence until the light opens (bell)
   sfx: [[0.4, 'bell', { m: 31, v: .9 }], [2.6, 'glass', { m: 50, v: .55 }], [3.4, 'glass', { m: 49, v: .5 }], [5.2, 'air', { d: .8, v: 1.1 }],
     ...[0, 1, 2, 3, 4, 5].map((k) => [6.2 + k * .5, 'glass', { m: [74, 76, 79, 81, 83, 86][k], v: .35 + k * .05 }]),
-    [9.4, 'air', { d: .7, v: .9 }], [10.0, 'crack', { v: 1.5 }], [10.0, 'glass', { m: 98, v: .8 }], [12.2, 'bell', { m: 43, v: .9 }], [12.4, 'air', { d: 2.6, v: .7 }]],
+    [9.4, 'air', { d: .7, v: .9 }], [10.0, 'crack', { v: 1.3, snap: .25 }], [10.0, 'glass', { m: 98, v: .7 }], [12.2, 'bell', { m: 43, v: .9 }], [12.4, 'air', { d: 2.6, v: .7 }],
+    [16.2, 'air', { d: 2.2, v: .45 }]],   // J6: evening air as the light leaves
   T: { whip: 5.2, onDavid: 5.9, spin: 6.2, release: 9.4, hit: 10.0, fall: 10.7, pull: 12.2, wide: 15.2 },
+  // J6 · the giant fallen → the night of the promise: the day ends, the camera pulls back to the opening wide
+  J: { next: '07-promise', t0: 15.3,
+    // A · sunset: the light reddens and slides off the window right to left (as it left Eden); in the dark the glass
+    // becomes the promise's window, and the moon comes
+    A(E, a, b, u) {
+      const { ss, seg, key, lerp, SUN } = E, GX = window.GX, s = ss(seg(u, .05, .6));
+      const eve = { ...a, sunCol: key(u, [[0, a.sunCol], [.3, SUN.dusk], [.6, [.8, .4, .45]]]), sunU: lerp(a.sunU, -2700, s), sunI: a.sunI * (1 - .4 * s) };
+      const o = GX.mixState(eve, GX.dark(b, 1 - ss(seg(u, .62, 1))), ss(seg(u, .55, 1)), (i) => u >= .6 + i * .02);
+      o.cam = GX.camMix(a.cam, b.cam, ss(u));
+      return o;
+    },
+    // B · into the dark: the light fades while the camera pulls back; the moon comes on the new glass
+    B(E, a, b, u) {
+      const { ss, seg } = E, GX = window.GX;
+      return GX.mixState(GX.dark(a, ss(seg(u, 0, .45))), GX.dark(b, 1 - ss(seg(u, .55, 1))), ss(u), () => u >= .5);
+    } },
   HAND: [215, 420],    // David's sling hand at the release (world)
   BROW: [522, 282],    // Goliath's brow: the stone strikes here, the crack starts here
 
@@ -94,6 +111,7 @@ window.CLIP = {
     // the strike: a white flash, then the crack glows
     const fl = seg(t, T.hit, T.hit + .6);
     if (fl > 0 && fl < 1) st.pts.push([bx, by, 60 + 240 * fl, 4 * (1 - fl) * (1 - fl), [1, .97, .9]]);
-    return st;
+    return window.GX.joint(E, this, st, t);
   },
 };
+(window.CLIPS ||= {})[window.CLIP.id] = window.CLIP;   // chapter joints: the previous chapter's tail reads this one

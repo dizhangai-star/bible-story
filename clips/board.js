@@ -140,7 +140,7 @@ window.CLIP = {
     switch (id) {
       case '01-1': return L('dawn', { cam: [0, ROSE.y, 2.6], sunI: 0, roseI: 1.5, amb: .02, rose: { lit: (q) => q.petal < 0 ? 1 : .03 }, lancets: this.panes(E, 'genesis') });
       case '01-2': return L('dawn', { cam: [0, ROSE.y + 20, 1.45], sunI: 0, roseI: 1.4, amb: .04, lancets: this.panes(E, 'genesis') });
-      case '01-3': return L('dawn', { cam: W, sx: .2, sz: 1.35, lancets: this.panes(E, 'genesis'), inscription: [['光之窗 · WINDOWS OF LIGHT', 60, 0]], gild: .18, sweep: [0, 700, .55, 806] });
+      case '01-3': return L('dawn', { cam: W, sx: .2, sz: 1.35, lancets: this.panes(E, 'genesis'), inscription: window.GX.TITLE, gild: .18, sweep: [0, 700, .55, 806] });
       case '02-1': return L('aft', { cam: [0, 400, 1.8], lancets: this.panes(E, 'eden') });
       case '02-2': return L('aft', { cam: [95, 400, 2.8], lancets: this.panes(E, 'eden'), pts: [[88, 404, 40, 1.4, [1, .8, .5]]] });
       case '02-3': return L('aft', { cam: [0, 400, 1.8], lancets: this.panes(E, 'eden', { cracks: 'open' }), pts: flash(LX[2] - 80, 400) });
@@ -158,10 +158,10 @@ window.CLIP = {
       case '06-1': return L('aft', { cam: [LX[3], 260, 1.45], sunU: LX[3], bandW: 330, lancets: this.panes(E, 'david') });
       case '06-2': return L('aft', { cam: [LX[2], 470, 2.0], sunU: LX[2], bandW: 330, lancets: this.panes(E, 'david') });
       case '06-3': return L('aft', { cam: [LX[3], 260, 1.45], sunU: LX[3], bandW: 330, lancets: this.panes(E, 'david', { cracks: 'open' }), pts: flash(LX[3] + 20, 170) });
-      case '07-1': return L('night', { cam: W, lancets: this.panes(E, 'promise', { cracks: 'mended' }), pts: [[LX[3], 350, 120, 2.6, [1, .6, .25]]], inscription: [['光之窗 · WINDOWS OF LIGHT', 60, 0]], gild: .2 });
+      case '07-1': return L('night', { cam: W, lancets: this.panes(E, 'promise', { cracks: 'mended' }), pts: [[LX[3], 350, 120, 2.6, [1, .6, .25]]], inscription: window.GX.TITLE, gild: .2 });
       case '07-2': return L('night', { cam: [LX[0], 250, 1.6], lancets: this.panes(E, 'promise', { cracks: 'mended' }), pts: [[LX[0] - 40, 230, 18, 4, [1, .8, .5]], [LX[0] + 10, 300, 14, 3, [1, .8, .5]]] });
       case '07-3': return L('night', { cam: [LX[3], 380, 1.9], lancets: this.panes(E, 'promise', { cracks: 'mended' }), pts: [[LX[3], 350, 120, 3, [1, .6, .25]]] });
-      case '07-4': return L('dawn', { cam: W, sunU: LX[0], bandW: 330, sunI: 2.2, lancets: this.panes(E, 'promise', { cracks: 'mended' }), pts: [[LX[3], 350, 120, 1.6, [1, .6, .25]]], inscription: [['光之窗 · WINDOWS OF LIGHT', 60, 0]], gild: .18 });
+      case '07-4': return L('dawn', { cam: W, sunU: LX[0], bandW: 330, sunI: 2.2, lancets: this.panes(E, 'promise', { cracks: 'mended' }), pts: [[LX[3], 350, 120, 1.6, [1, .6, .25]]], inscription: window.GX.TITLE, gild: .18 });
     }
     return L('night', { cam: W });
   },

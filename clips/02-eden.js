@@ -5,9 +5,9 @@
 // (hold) · 02-4 pull back to the MS while the light leaves.
 window.CLIP = {
   id: '02-eden',
-  uses: ['_glass'],
-  duration: 18,
-  timing: { fadeIn: [0, 0.5], fade: [17.3, 18] },
+  uses: ['_glass', '03-flood'],
+  duration: 19.2,
+  timing: { fadeIn: [-1, 0], fade: [19.2, 19.2] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
     [0.9, 4.8, 'And the LORD God planted a garden eastward in Eden.', '耶和華神在東方的伊甸立了一個園子。'],
     [5.6, 9.3, 'She took of the fruit thereof, and did eat, and gave also unto her husband.', '就摘下果子來吃了，又給她丈夫。'],
@@ -15,9 +15,26 @@ window.CLIP = {
   ],
   // calm glass notes; tension swell as the fruit is raised; near-silence 9.5–10.2; the crack; a low bell as the light leaves
   sfx: [[0.9, 'glass', { m: 74, v: .5 }], [2.6, 'glass', { m: 78, v: .35 }], [7.0, 'glass', { m: 79, v: .6 }], [7.4, 'air', { d: 2.0, v: .8 }],
-    [8.6, 'glass', { m: 80, v: .6 }], [10.2, 'crack', { v: 1.4 }], [10.2, 'glass', { m: 98, v: .7 }], [12.2, 'bell', { m: 38, v: .9 }],
-    [12.6, 'air', { d: 3.2, v: .7 }]],
+    [8.6, 'glass', { m: 80, v: .6 }], [10.2, 'crack', { v: 1.25 }], [10.2, 'glass', { m: 98, v: .7 }], [12.2, 'bell', { m: 38, v: .9 }],
+    [12.6, 'air', { d: 3.2, v: .7 }],
+    [17.6, 'air', { d: 2.4, v: .8 }]],   // J2: the storm's rain is heard before it is seen
   T: { push: 3.0, crack: 10.2, turn: 10.8, pull: 11.2, out: 12.2 },
+  // J2 · the fall → the flood: in the dark after the expulsion the window becomes the storm
+  J: { next: '03-flood', t0: 16.9,
+    // A · rain in the dark: the glass changes unlit, the camera pulls back to the wide, rain first, then cold dawn
+    A(E, a, b, u) {
+      const { ss, seg } = E, GX = window.GX;
+      return GX.mixState(GX.dark(a, ss(seg(u, 0, .3))), GX.dark(b, 1 - ss(seg(u, .45, 1))), ss(u), (i) => u >= .3 + i * .03);
+    },
+    // B · light through the wound: push into Eden's crack, cold light pours out of it and becomes the storm's dawn
+    B(E, a, b, u) {
+      const { ss, seg, key } = E, GX = window.GX, [fx, fy] = this.FRUIT, g = Math.sin(Math.PI * seg(u, .12, .82));
+      const o = GX.mixState(a, b, ss(seg(u, .5, 1)), () => u >= .5);
+      o.cam = key(u, [[0, a.cam], [.45, [fx - 10, fy, 2.7]], [.55, [fx - 10, fy, 2.7]], [1, b.cam]]);
+      o.pts = [[fx, fy, 40 + 700 * g, 4.5 * g, [.75, .85, 1]], ...o.pts].slice(0, 4);
+      o.expo = 1.1 + 5 * Math.pow(Math.sin(Math.PI * seg(u, .3, .7)), 3);   // a white-out at the peak hides the change
+      return o;
+    } },
   FRUIT: [66, 400],   // world position of the fruit in Eve's raised hand (crack origin, light gathers here)
 
   panes(E, t) {
@@ -64,6 +81,7 @@ window.CLIP = {
       st.amb = key(t, [[T.out, .06], [16.5, .045]]); st.ambCol = [.5, .56, .8];
       st.roseI = key(t, [[T.out, .8], [16.5, .1]]); st.skyI = key(t, [[T.out, .1], [16.5, .08]]);
     }
-    return st;
+    return window.GX.joint(E, this, st, t);
   },
 };
+(window.CLIPS ||= {})[window.CLIP.id] = window.CLIP;   // chapter joints: the previous chapter's tail reads this one

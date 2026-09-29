@@ -12,8 +12,7 @@ window.CLIP = {
   id: '07-promise',
   uses: ['_glass'],
   duration: 20,
-  timing: { fadeIn: [0, 0.6], fade: [19.2, 20] },
-  glyphs: '光之窗',
+  timing: { fadeIn: [-1, 0], fade: [19.2, 20] },   // enters from 06's tail (J6); the film ends on this fade
   caps: [
     [3.6, 8.0, 'A bruised reed shall he not break.', '壓傷的蘆葦，他不折斷。'],
     [12.4, 16.0, 'The people that walked in darkness have seen a great light.', '在黑暗中行走的百姓看見了大光。'],
@@ -91,7 +90,7 @@ window.CLIP = {
       sunI: pre ? lerp(1.0, 1.9 * fl, lit) - .5 * Math.sin(Math.PI * lit) : lerp(0, 1.8, dawn),
       sunCol: pre ? [lerp(.62, 1, lit), .7, lerp(1, .35, lit)] : [.85, .9, 1], sx: 0, sz: 1.2,
       skyI: .07, amb: .05, roseI: key(t, [[0, .15], [T.dawn, .15], [T.wide, .7]]), raysK: .45, time: t,
-      inscription: [['光之窗 · WINDOWS OF LIGHT', 60, 0]], gild: key(t, [[0, .08], [T.dawn, .08], [T.wide, .18]]) });
+      inscription: window.GX.TITLE, gild: key(t, [[0, .08], [T.dawn, .08], [T.wide, .18]]) });
     // the rose's centre sparks again at dawn (the opening image); its petals stay dim
     const spark = ss(seg(t, T.dawn, T.dawn + .6));
     st.rose = { lit: (q) => q.petal < 0 ? .1 + .9 * spark : .12 + .3 * dawn };
@@ -112,3 +111,4 @@ window.CLIP = {
     return st;
   },
 };
+(window.CLIPS ||= {})[window.CLIP.id] = window.CLIP;   // chapter joints: the previous chapter's tail reads this one

@@ -53,6 +53,6 @@ window.CLIP = {
     // PROMISE · night wide: moonlight through every pane, the Eden crack mended with lead, one lamp keeps its own light
     return { cam: [0, 300, .5], sunU: 0, bandW: 3200, sunI: .5, sunCol: SUN.moon, sx: 0, sz: 1.2, skyI: .05, skyCol: [.4, .5, .9],
       amb: .06, ambCol: [.5, .55, .8], roseI: .15, floorMode: 1, floor: { camD: 2600, eyeH: 320 }, lancets: this.panes(E, t, 'night'),
-      pts: [[LX[3], 350, 120, 2.6, [1, .6, .25]]], inscription: [['光之窗 · WINDOWS OF LIGHT', 60, 0]], gild: .2, time: 3 };
+      pts: [[LX[3], 350, 120, 2.6, [1, .6, .25]]], inscription: window.GX.TITLE, gild: .2, time: 3 };
   },
 };

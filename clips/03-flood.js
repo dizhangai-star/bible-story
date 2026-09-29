@@ -5,9 +5,9 @@
 // Beats (TREATMENT §4): 03-1 wide truck → · 03-2 the ark · 03-3 Noah, the dove · 03-4 window → floor · 03-5 onto the floor.
 window.CLIP = {
   id: '03-flood',
-  uses: ['_glass'],
-  duration: 20,
-  timing: { fadeIn: [0, 0.5], fade: [19.3, 20] },
+  uses: ['_glass', '04-abraham'],
+  duration: 23,
+  timing: { fadeIn: [-1, 0], fade: [23, 23] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
     [0.8, 4.0, 'And the rain was upon the earth forty days and forty nights.', '四十晝夜降大雨在地上。'],
     [4.6, 7.9, 'The waters increased, and bare up the ark.', '水往上長，把方舟從地上漂起。'],
@@ -17,8 +17,28 @@ window.CLIP = {
   // air for the storm; a long swell as the water lifts the ark; the dove lands; six rising notes = six bands of the bow
   sfx: [[0.3, 'air', { d: 3.8, v: 1.0 }], [4.6, 'air', { d: 3.4, v: .8 }], [4.6, 'glass', { m: 62, v: .5 }], [7.6, 'glass', { m: 67, v: .5 }],
     [10.5, 'glass', { m: 86, v: .8 }], [12.4, 'bell', { m: 50, v: .8 }],
-    ...[0, 1, 2, 3, 4, 5].map((k) => [12.7 + k * .3, 'glass', { m: [74, 76, 77, 79, 81, 86][k], v: .6 }]), [14.4, 'air', { d: 2.8, v: .6 }]],
+    ...[0, 1, 2, 3, 4, 5].map((k) => [12.7 + k * .3, 'glass', { m: [74, 76, 77, 79, 81, 86][k], v: .6 }]), [14.4, 'air', { d: 2.8, v: .6 }],
+    [21.2, 'air', { d: 2.2, v: .4 }]],   // J3: night air as the camera climbs to Abraham
   T: { ark: 4.6, rise: 7.8, noah: 8.2, bow: 12.4, top: 16.0 },
+  // J3 · the bow → the stars (two signs of a covenant): the day ends on the floor, night comes, up to Abraham
+  J: { next: '04-abraham', t0: 19.0,
+    // A · sunset on the floor: the bow's light slides and stretches across the flagstones, reddens and goes out;
+    // then one tilt up from the floor into lancet II, where the moonbeam finds Abraham
+    A(E, a, b, u) {
+      const { ss, seg, key, lerp, SUN } = E, GX = window.GX, d = ss(seg(u, 0, .5)), m = ss(seg(u, .55, 1));
+      const eve = { ...a, sunCol: a.sunCol.map((v, j) => lerp(v, SUN.dusk[j], d)), sx: lerp(a.sx, -.55, d), sz: lerp(a.sz, 2.4, d) };
+      const o = GX.mixState(GX.dark(eve, ss(seg(u, .25, .55))), GX.dark(b, 1 - m), m, () => u >= .5);
+      o.cam = GX.camMix(key(u, [[0, a.cam], [.5, [0, 800, .84]]]), b.cam, ss(seg(u, .5, 1)));
+      return o;
+    },
+    // B · the bow's window at dusk: tilt back up to the window, the bow reddens and goes dark, then down to Abraham
+    B(E, a, b, u) {
+      const { ss, seg, key, lerp, SUN } = E, GX = window.GX, d = ss(seg(u, .1, .5)), m = ss(seg(u, .6, 1));
+      const eve = { ...a, sunCol: a.sunCol.map((v, j) => lerp(v, SUN.dusk[j], d)) };
+      const o = GX.mixState(GX.dark(eve, ss(seg(u, .3, .58))), GX.dark(b, 1 - m), m, () => u >= .58);
+      o.cam = GX.camMix(key(u, [[0, a.cam], [.45, [0, 250, .62]], [.6, [0, 240, .64]]]), b.cam, ss(seg(u, .6, 1)));
+      return o;
+    } },
   HANDS: [245, 400],   // Noah's raised hands (world), where the dove lands
   LAND: 10.5,   // the dove lands in Noah's hands
 
@@ -68,6 +88,7 @@ window.CLIP = {
     // the olive leaf flashes as the dove lands
     const fl = seg(t, this.LAND, this.LAND + .5);
     st.pts = fl > 0 && fl < 1 ? [[this.HANDS[0], this.HANDS[1] - 10, 40, 1.6 * (1 - fl), [1, .95, .8]]] : [];
-    return st;
+    return window.GX.joint(E, this, st, t);
   },
 };
+(window.CLIPS ||= {})[window.CLIP.id] = window.CLIP;   // chapter joints: the previous chapter's tail reads this one
