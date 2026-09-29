@@ -25,29 +25,29 @@ window.CLIP = {
       const p = FPOSE[pose];
       drawFigure(P, I.translate(x + w / 2 + dx, y + h - 22 - 182 * sc + (p.rootDy || 0) * sc).scale(flip ? -sc : sc, sc), p, cast);
     };
-    O.textAlign = 'left'; O.fillStyle = '#efe2c4'; O.font = '700 34px Cinzel, "Noto Serif TC"'; O.fillText('光之窗 · WINDOWS OF LIGHT — 角色設定 CAST SHEET v1', 44, 52);
+    O.textAlign = 'left'; O.fillStyle = '#efe2c4'; O.font = '700 34px Cinzel, "Noto Serif TC"'; O.fillText('光之窗 · WINDOWS OF LIGHT — 角色設定 CAST SHEET v2', 44, 52);
     O.font = 'italic 21px "IM Fell English"'; O.fillStyle = 'rgba(239,226,196,.75)';
     O.fillText('One glass rig for everyone (the demo knight’s skeleton): cut pieces, lead cames, grisaille faces. God is never drawn — only light.', 44, 82);
     // row 1: the people, each in the pose their chapter needs
     const row = [
       ['stand', 'adam', 'ADAM · 亞當', 'II · Eden — leaf girdle', .9, false],
       ['offer', 'eve', 'EVE · 夏娃', 'II · Eden — holds the fruit', .9, true],
-      ['pray', 'noah', 'NOAH · 挪亞', 'III · Flood — kneels after the rain', .9, false],
+      ['pray', 'noah', 'NOAH · 挪亞', 'III · Flood — the dove returns to his hands', .9, false],
       ['lookUp', 'abraham', 'ABRAHAM · 亞伯拉罕', 'IV · counts the stars', .86, false],
-      ['raiseStaff', 'moses', 'MOSES · 摩西', 'V · parts the sea', .7, false],
+      ['raiseStaff', 'moses', 'MOSES · 摩西', 'V · rod raised, face shining', .7, false],
     ];
     row.forEach(([pose, who, t1, t2, sc, flip], i) => {
       const x = 36 + i * 250, y = 104, w = 232, h = 450;
-      inPanel(x, y, w, h, 11 + i, () => fig(x, y, w, h, pose, pose === 'pray' ? { ...CAST[who], item: null } : CAST[who], sc, flip ? 6 : -6, flip));
+      inPanel(x, y, w, h, 11 + i, () => fig(x, y, w, h, pose, CAST[who], sc, flip ? 6 : -6, flip));
       label(x + w / 2, y + h + 30, t1, t2);
     });
     // David and Goliath share a panel, to show the scale
     { const x = 1290, y = 104, w = 594, h = 450;
       inPanel(x, y, w, h, 21, () => {
-        const sc = 1.02; drawKnight(P, I.translate(x + 410, y + h - 22 - 182 * sc).scale(-sc, sc), { ...POSE.guard, face: 'fierce' }, { id: 700 });
+        const sc = 1.02; E.drawGoliath(P, I.translate(x + 410, y + h - 22 - 182 * sc).scale(-sc, sc), { ...POSE.guard, wF: 40 * Math.PI / 180 });
         fig(x, y, 260, h, 'sling', CAST.david, .6, 50);
       });
-      label(x + w / 2, y + h + 30, 'DAVID · 大衛  &  GOLIATH · 歌利亞', 'VI · a shepherd with a sling; the giant in mail (the demo knight, ×1.7)'); }
+      label(x + w / 2, y + h + 30, 'DAVID · 大衛  &  GOLIATH · 歌利亞', 'VI · ruddy shepherd with a sling · the giant in brass and mail'); }
     // row 2: serpent, dove, faces
     { const x = 36, y = 640, w = 360, h = 380;
       inPanel(x, y, w, h, 31, () => { GX.bigTree(E, P, x + w / 2, y + h + 40, .95, 800); GX.serpent(E, P, x + w / 2, y + h - 110, 1.15, 830); });
@@ -66,7 +66,7 @@ window.CLIP = {
       P.setTransform(I); P.piece(circle(cx, cy, r + 10), COL.ruby, { id: 900 + i, lead: 6, mat: false });
       P.piece(circle(cx, cy, r), COL.cobalt, { id: 910 + i, lead: 6, matW: 14 });
       P.g.save(); P.s.save(); P.g.clip(circle(cx, cy, r)); P.s.clip(circle(cx, cy, r));
-      const sc = 2.0; drawFigure(P, I.translate(cx - 30 * sc, cy + 150 * sc).scale(sc), { ...FPOSE.stand, face, neck: 0 }, { ...CAST[who], item: null, mantle: null });
+      const sc = 1.55; drawFigure(P, I.translate(cx - 16 * sc, cy + 150 * sc).scale(sc), { ...FPOSE.stand, face, neck: 0 }, { ...CAST[who], item: null, mantle: null });
       P.setTransform(I); P.g.restore(); P.s.restore();
       O.textAlign = 'center'; O.fillStyle = 'rgba(233,220,192,.8)'; O.font = 'italic 19px "IM Fell English"'; O.fillText(`${n} · ${face}`, cx, cy + r + 28);
     });

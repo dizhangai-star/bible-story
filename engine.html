@@ -25,7 +25,7 @@ import { makeComp } from './sg/comp.js';
 import { renderScene } from './sg/scene.js';
 import { drawBanderole } from './sg/subs.js';
 import { drawKnight, POSE } from './sg/knight.js';
-import { drawFigure, FPOSE, CAST } from './sg/figure.js';
+import { drawFigure, drawGoliath, FPOSE, CAST } from './sg/figure.js';
 import { archPanel, drawPanel } from './sg/test.js';
 
 const mk = (w = 1920, h = 1080) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
@@ -40,7 +40,7 @@ const key = (t, ks) => { if (t <= ks[0][0]) return ks[0][1]; for (let i = 0; i <
 const step = (t, fps = 8) => Math.floor(t * fps + 1e-6) / fps;   // glass figures move in held steps
 // sun colours × intensity by time of day (STYLE.md §3)
 const SUN = { dawn: [.7, .83, 1.0], noon: [1, .97, .9], aft: [1, .84, .6], dusk: [1, .6, .34], violet: [.62, .34, .55], moon: [.55, .66, 1.0] };
-const E = { ...LIB, ...GLASS, ...WIN, key, step, SUN, Lc, L, comp, drawKnight, POSE, drawFigure, FPOSE, CAST, archPanel, drawPanel };
+const E = { ...LIB, ...GLASS, ...WIN, key, step, SUN, Lc, L, comp, drawKnight, POSE, drawFigure, drawGoliath, FPOSE, CAST, archPanel, drawPanel };
 window.E = E;
 
 const subsOf = (A) => (A.caps || []).map(([t0, t1, en, zh]) => ({ t0, t1, text: `${zh}\n${en}` }));

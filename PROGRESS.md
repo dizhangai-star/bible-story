@@ -3,7 +3,7 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Cast sheet v1 delivered (2026-09-29), waiting for approval:** `frames/castsheet.png` (also `docs/`), dev clip
+**Cast sheet v2 delivered (2026-09-29), waiting for approval** (v2 = iconography pass, see Notes): `frames/castsheet.png` (also `docs/`), dev clip
 `clips/cast.js`, rig `sg/figure.js` (costumes in `CAST`, poses in `FPOSE`). After approval: **Sprint 2 · 02-eden,
 03-flood** (see TREATMENT clip list), then compile a silent draft for review. User is making the Suno track.
 Sample approved; darker hall look approved (user left it to Claude; see Decisions). Code on GitHub:
@@ -40,6 +40,10 @@ https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` req
 - `clips/sf.js`: style frames (dev clip). Sfx kinds in `audio/music.mjs`: glass {m}, crack, air {d}, bell {m}.
 
 ## Notes
+- Cast iconography (v2, checked against the text and medieval/Doré tradition): Moses = two gold rays from the head
+  (Ex 34:29), brown hair + grey beard; Goliath = `drawGoliath` (knight + brass helmet + weaver's-beam spear, no sword,
+  1 Sam 17:5–7); David = ruddy/auburn hair, shepherd's bag + strap, sling (1 Sam 16:12, 17:40); Eve = `fem` face
+  (thin arched brows, lip tint) + front hair lock; Noah = dove in his hands; elders = `old` age lines.
 - Gold gilding on sunlit stone is unreadable: keep `gild` ≤ .15 in daylight (dark incised letters read).
 - `raysK` .45 in wide shots, or the shafts wash out lancet IV and the title.
 - Unlit rose pieces: dim transmittance to ~3 % (`rose.lit`), otherwise the petals don't read as lighting one by one.
