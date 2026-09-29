@@ -95,9 +95,9 @@ window.GX = {
     P.piece(smooth([[x - 74 * s, y - 70 * s, 1], [x, y - 108 * s, 1], [x + 74 * s, y - 70 * s, 1]]), COL.ruby, { id: id + 2, lead: 5, matW: 6 });
   },
   // a rainbow: annular bands round (cx, cy); each band is a piece (clipped by the lancet it is drawn in)
-  rainbow(E, P, cx, cy, r0, bw, id) {
+  rainbow(E, P, cx, cy, r0, bw, id, n = 6) {   // n = how many bands (red outward) are set
     const cols = ['#a8101c', '#e0561c', '#eab640', '#2f7f36', '#2a52b0', '#632a63'];
-    cols.forEach((c, k) => { const R0 = r0 + k * bw, p = new Path2D(); p.arc(cx, cy, R0 + bw, Math.PI, 0); p.arc(cx, cy, R0, 0, Math.PI, true); p.closePath(); P.piece(p, c, { id: id + k, lead: 4, mat: false }); });
+    cols.slice(0, n).forEach((c, k) => { const R0 = r0 + k * bw, p = new Path2D(); p.arc(cx, cy, R0 + bw, Math.PI, 0); p.arc(cx, cy, R0, 0, Math.PI, true); p.closePath(); P.piece(p, c, { id: id + k, lead: 4, mat: false }); });
   },
   // waves: horizontal bands with a wavy top edge, from y0 to the bottom of the lancet
   waves(E, P, cx, y0, ph, id) {
@@ -123,5 +123,37 @@ window.GX = {
       if (!mended) { g.strokeStyle = 'rgba(255,248,232,.95)'; g.lineWidth = c.w; g.lineJoin = 'round'; g.stroke(path); if (P.mode === 'full') { s.strokeStyle = 'rgba(20,20,24,.55)'; s.lineWidth = c.w * .5; s.stroke(path); } }
       else P.lead(path, 3.2);
     });
+  },
+
+  // ---------- shared scene helpers (chapter clips + board.js) ----------
+  // light presets for the darker hall look; o overrides any field
+  light(E, k, o = {}) {
+    const { SUN } = E;
+    const P = { dawn: [SUN.dawn, 2.2, .42, 1.5], noon: [SUN.noon, 2.7, .06, .62], aft: [SUN.aft, 2.35, -.36, 1.3], dusk: [SUN.dusk, 2.6, -.55, 2.1], night: [SUN.moon, .6, 0, 1.2] }[k];
+    return { sunCol: P[0], sunI: P[1], sx: P[2], sz: P[3], sunU: 0, bandW: 3200, skyI: k === 'night' ? .05 : .1, skyCol: [.55, .65, .9],
+      amb: k === 'night' ? .05 : .075, ambCol: [.62, .64, .82], spill: .5, contrast: .22, vign: .6, haze: .45, raysK: .55,
+      roseI: k === 'night' ? .15 : .8, floorMode: 1, floor: { camD: 2600, eyeH: 320 }, time: 3, ...o };
+  },
+  // pose: an FPOSE name, or [a, b, u] = blend of two poses (angles mixed, face switches at u .5); u is stepped by the caller
+  pose(E, p) {
+    if (typeof p === 'string') return E.FPOSE[p];
+    const [a, b, u] = p, A = E.FPOSE[a], B = E.FPOSE[b], o = { ...(u < .5 ? A : B) };
+    for (const k in A) if (typeof A[k] === 'number' && typeof B[k] === 'number') o[k] = A[k] + (B[k] - A[k]) * u;
+    return o;
+  },
+  // a robed figure standing on the lancet floor at cx + x, scale s; cast may be a CAST name or an object
+  fig(E, P, cx, base, who, pose, x, s, flip, over) {
+    const p = this.pose(E, pose), c = typeof who === 'string' ? E.CAST[who] : who;
+    E.drawFigure(P, base.translate(cx + x, 604 - 182 * s + (p.rootDy || 0) * s).scale(flip ? -s : s, s), p, over ? { ...c, ...over } : c);
+  },
+  bg(E, P, cx, col, id) { P.piece(new Path2D(`M${cx - 160} -400 H${cx + 160} V660 H${cx - 160} Z`), col, { id, lead: 0, mat: false }); },
+  garden(E, P, cx, id) { E.hills(P, cx, 540, [{ y: -10, a: 12, ph: id % 7, c: E.COL.olive }, { y: 40, a: 8, ph: 3, c: E.COL.green2 }], id); },
+  // rain: grisaille streaks painted on the glass, stepped (t already stepped by the caller)
+  rain(E, P, cx, t, y1, id, a = .5) {
+    const r = E.mulberry(id);
+    for (let j = 0; j < 22; j++) {
+      const x = cx - 150 + r() * 300, sp = 260 + r() * 140, L = 50 + r() * 60, y = -420 + ((r() * 1000 + t * sp) % (y1 + 420));
+      E.brush(P.g, [[x, y], [x - L * .22, y + L]], 1.3 + r(), { color: `rgba(200,220,255,${a})` });
+    }
   },
 };
