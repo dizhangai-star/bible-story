@@ -1,0 +1,106 @@
+# Render in the cloud: Actions → "Render" → Run workflow → pick a clip (or `film`) → download the artifact.
+# The kit is private and not in this repo: it is checked out from KIT_REPO (repo variable, default
+# dizhangai-star/video-kit) with the KIT_TOKEN secret (a fine-grained PAT with read access to that repo),
+# into ../_kit next to this folder, exactly as on the Mac.
+name: Render
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Clip id (e.g. 01-genesis) or "film" for the whole film'
+        required: true
+        default: 01-genesis
+      mode:
+        description: 'render = mp4 · preview = frame grid only (fast) · check = glyph check only'
+        type: choice
+        options: [render, preview, check]
+        default: render
+      silent:
+        description: 'Skip the sound (clip render only)'
+        type: boolean
+        default: false
+      kit_ref:
+        description: 'Kit branch/tag/commit'
+        required: false
+        default: main
+
+concurrency:
+  group: render-${{ inputs.target }}-${{ inputs.mode }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    defaults:
+      run:
+        working-directory: bible-story
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bible-story
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.KIT_REPO || 'dizhangai-star/video-kit' }}
+          ref: ${{ inputs.kit_ref }}
+          token: ${{ secrets.KIT_TOKEN }}
+          path: _kit
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: System deps (ffmpeg, CJK fonts)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk >/dev/null
+
+      # The runner has no GPU: WebGL2 runs on SwiftShader, which recent Chrome only enables with an explicit flag.
+      # A wrapper adds the flags whatever the kit passes to puppeteer.
+      - name: Chrome wrapper (software WebGL)
+        run: |
+          cat > "$RUNNER_TEMP/chrome" <<'EOF'
+          #!/bin/sh
+          exec /usr/bin/google-chrome --enable-unsafe-swiftshader --use-angle=swiftshader --ignore-gpu-blocklist --no-sandbox "$@"
+          EOF
+          chmod +x "$RUNNER_TEMP/chrome"
+          for v in CHROME CHROME_PATH CHROME_BIN PUPPETEER_EXECUTABLE_PATH; do echo "$v=$RUNNER_TEMP/chrome" >> "$GITHUB_ENV"; done
+
+      - name: Kit dependencies
+        working-directory: _kit
+        run: if [ -f package-lock.json ]; then npm ci; elif [ -f package.json ]; then npm install; fi
+
+      - name: Run
+        env:
+          TARGET: ${{ inputs.target }}
+          MODE: ${{ inputs.mode }}
+          SILENT: ${{ inputs.silent }}
+        run: |
+          case "$MODE" in
+            preview)
+              node preview.mjs "$TARGET" $([ "$TARGET" = film ] || echo --every 1) ;;
+            check)
+              node render.mjs "$TARGET" --check ;;
+            render)
+              if [ "$TARGET" = film ]; then
+                node compile.mjs
+                node ../_kit/bin/srt.mjs
+                node ../_kit/bin/check.mjs | tee out/check.txt
+              else
+                node render.mjs "$TARGET" $([ "$SILENT" = true ] && echo --silent)
+              fi ;;
+          esac
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ inputs.mode }}-${{ inputs.target }}-${{ github.run_number }}
+          path: |
+            bible-story/out/*.mp4
+            bible-story/out/*.srt
+            bible-story/out/check.txt
+            bible-story/frames/*.png
+          if-no-files-found: warn
+          retention-days: 14

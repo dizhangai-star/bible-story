@@ -31,4 +31,11 @@ node render.mjs 01-genesis                      # clip → out/01-genesis.mp4
 node compile.mjs                                # all clips → out/bible-story.mp4
 ```
 
+### Rendering in the cloud (GitHub Actions)
+**Actions → Render → Run workflow**: `target` = a clip id or `film`, `mode` = `render` / `preview` / `check`.
+The result (mp4, srt, QC report or frame grids) is attached to the run as an artifact, kept 14 days:
+`gh run download --repo dizhangai-star/bible-story` or the run page's *Artifacts* box.
+One-time setup: push the kit to a private repo (default `dizhangai-star/video-kit`, or set the repo variable
+`KIT_REPO`), and add a secret `KIT_TOKEN` = fine-grained PAT with *Contents: read* on that repo.
+
 Captions: 和合本 (繁體) and KJV, both public domain. Fonts: Cinzel, IM Fell English, Noto Serif TC (OFL).
