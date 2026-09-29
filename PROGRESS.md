@@ -3,7 +3,7 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Cast sheet v2 delivered (2026-09-29), waiting for approval** (v2 = iconography pass, see Notes): `frames/castsheet.png` (also `docs/`), dev clip
+**PAUSED by the user (2026-09-29) before Sprint 2.** Cast sheet v2 **approved** (iconography pass, see Notes): `frames/castsheet.png` (also `docs/`), dev clip
 `clips/cast.js`, rig `sg/figure.js` (costumes in `CAST`, poses in `FPOSE`). After approval: **Sprint 2 · 02-eden,
 03-flood** (see TREATMENT clip list), then compile a silent draft for review. User is making the Suno track.
 Sample approved; darker hall look approved (user left it to Claude; see Decisions). Code on GitHub:
@@ -24,7 +24,7 @@ https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` req
 
 ## Sprints
 - [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames, SUNO.md
-- [ ] **1 · Cast sheet** v1 done → approval
+- [x] **1 · Cast sheet** v2 approved 2026-09-29
 - [ ] **2 · 02-eden, 03-flood** · [ ] **3 · 04-abraham, 05-exodus** · [ ] **4 · 06-david, 07-promise**
 - [ ] **5 · Sound**: Suno track in, retime cuts to its beats, foley pass, mix
 - [ ] **6 · Deliver**: compile, check, srt, poster
