@@ -3,14 +3,14 @@
 // World units: rose (0,-560) r175; lancets LX = [-510,-170,170,510], 300 wide, apex -320, bottom 640; floor 900.
 window.CLIP = {
   id: '01-genesis',
-  uses: ['_glass'],
-  duration: 15,
-  timing: { fadeIn: [0, 0.3], fade: [14.3, 15] },
-  glyphs: '光之窗',
+  uses: ['_glass', '02-eden'],
+  duration: 17.2,
+  timing: { fadeIn: [0, 0.3], fade: [17.2, 17.2] },   // no fade out: the tail hands over to 02 (J1)
   caps: [
     [1.2, 4.9, 'In the beginning God created the heaven and the earth.', '起初，神創造天地。'],
     [5.5, 9.1, 'And God said, Let there be light: and there was light.', '神說：「要有光」，就有了光。'],
     [10.8, 14.0, 'And God saw every thing that he had made, and, behold, it was very good.', '神看著一切所造的都甚好。'],
+    [14.5, 16.9, 'The Second Window · Eden', '第二扇窗 · 伊甸'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   // glass notes climb D Dorian, one per day; the light lands with a bell; air on the light move and the title sweep
   sfx: [[0.8, 'glass', { m: 86, v: 1.2 }], [2.4, 'glass', { m: 74 }], [3.15, 'glass', { m: 76 }], [3.9, 'glass', { m: 77 }],
@@ -19,6 +19,14 @@ window.CLIP = {
   // beats (80 BPM, 0.75 s): spark 0.8 · days 2.4 … 6.15 · light 7.0 · title 9.4
   DAYS: [2.4, 3.15, 3.9, 4.65, 5.4, 6.15],
   T_LIGHT: 7.0,
+  // J1 · the made world → the garden in it: the wide pushes in to 02's MS while the window is re-glazed
+  J: { next: '02-eden', t0: 14.2,
+    // cloud: a cloud's shadow passes over the window; under it the glass becomes the garden, the light warms
+    A(E, a, b, u) {
+      const { ss, seg } = E, GX = window.GX, c = Math.sin(Math.PI * seg(u, .12, .9));
+      const o = GX.mixState(GX.dark(a, .75 * c), GX.dark(b, .75 * c), ss(seg(u, .05, 1)), (i) => u >= .47 + i * .02);
+      return o;
+    } },
 
   // pane content: I light (sun + moon and stars) · II waters (dove over the deep) · III land · IV life
   panes(E, t) {
@@ -75,7 +83,7 @@ window.CLIP = {
       amb: key(t, [[0, .02], [2.4, .04], [TL, .045], [TL + 2.5, .075]]), ambCol: [.62, .64, .82], contrast: .22, haze: .45, spill: .5,
       floorMode: 1, floor: { camD: 2600, eyeH: 320 }, lancets: A.panes(E, t),
       ltint: [[.95, .8, .5], [.45, .6, 1.0], [.6, .85, .45], [.7, .55, .95]],
-      inscription: [['光之窗 · WINDOWS OF LIGHT', 60, 0]], vign: .62,
+      inscription: window.GX.TITLE, vign: .62,
     };
     // title: a strip of light sweeps the carved string course, then rests
     const sw = seg(t, 9.4, 11.4);
@@ -86,6 +94,7 @@ window.CLIP = {
     const fl = seg(t, TL, TL + .5);
     st.pts = fl > 0 && fl < 1 ? [[0, ROSE.y, 60 + 160 * fl, 3.2 * (1 - fl) * (1 - fl), [1, .96, .85]]] : [];
     if (spark > 0 && t < 2.4) st.pts.push([0, ROSE.y, 30, 1.4 * spark * (1 - seg(t, 1.3, 2.4)), [1, .85, .5]]);
-    return st;
+    return window.GX.joint(E, this, st, t);
   },
 };
+(window.CLIPS ||= {})[window.CLIP.id] = window.CLIP;   // chapter joints: the previous chapter's tail reads this one

@@ -7,19 +7,36 @@
 const FIRE = [1, .52, .2];
 window.CLIP = {
   id: '05-exodus',
-  uses: ['_glass'],
-  duration: 18,
-  timing: { fadeIn: [0, 0.5], fade: [17.3, 18] },
+  uses: ['_glass', '06-david'],
+  duration: 20.8,
+  timing: { fadeIn: [-1, 0], fade: [20.8, 20.8] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
-    [0.9, 4.6, 'It was a cloud and darkness to them, but it gave light by night to these.', '在埃及營和以色列營中間有雲柱，一邊黑暗，一邊發光。'],
+    [0.9, 4.6, 'And the LORD went before them by night in a pillar of fire, to give them light.', '夜間，耶和華在火柱中光照他們。'],
     [5.3, 8.9, 'And Moses stretched out his hand over the sea; and the waters were divided.', '摩西向海伸杖，水便分開。'],
     [10.8, 16.6, 'And the children of Israel went into the midst of the sea upon the dry ground.', '以色列人下海中走乾地，水在他們的左右作了牆垣。'],
+    [17.4, 20.2, 'The Sixth Window · David', '第六扇窗 · 大衛'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   // the fire's roar; the rod raised (rising notes), the rays; the east wind as the sea opens; a bell on the dry road
   sfx: [[0.2, 'air', { d: 4.4, v: .9 }], [5.4, 'glass', { m: 62, v: .5 }], [5.9, 'glass', { m: 67, v: .5 }], [6.4, 'glass', { m: 71, v: .55 }],
     [6.8, 'glass', { m: 86, v: .8 }], [6.8, 'bell', { m: 50, v: .6 }], [8.4, 'air', { d: 4.6, v: 1.1 }],
-    ...[0, 1, 2, 3, 4].map((k) => [8.8 + k * .7, 'glass', { m: [55, 57, 60, 62, 67][k], v: .45 }]), [12.4, 'bell', { m: 43, v: .8 }]],
+    ...[0, 1, 2, 3, 4].map((k) => [8.8 + k * .7, 'glass', { m: [55, 57, 60, 62, 67][k], v: .45 }]), [12.4, 'bell', { m: 43, v: .8 }],
+    [17.8, 'air', { d: 2.2, v: .5 }], [18.6, 'bell', { m: 55, v: .35 }]],   // J5: morning wind, a far bell at dawn
   T: { moses: 4.8, raise: 5.3, rays: 6.8, pull: 8.2, part: 8.6, open: 12.4, walk: 11.0, wide: 15.2 },
+  // J5 · the crossing → the valley of Elah (night → day): "the sea returned at the morning appearing" (Ex 14:27)
+  J: { next: '06-david', t0: 17.0,
+    // dawn over the sea: the fire goes out, a pale dawn band crosses the window left to right, re-glazing each
+    // lancet before it reaches it, warms to afternoon and settles on Goliath's lancet as the camera trucks to him
+    A(E, a, b, u) {
+      const { ss, seg, key, LX } = E, GX = window.GX;
+      // the fire's band narrows and leaves the window to the left; for a moment the hall is black (the glass changes
+      // there, unseen); then the dawn band comes in from the left and crosses to Goliath
+      const x = key(u, [[0, a.sunU], [.28, LX[0] - 480], [.42, LX[0] - 480], [.88, LX[3]], [1, b.sunU]]);
+      const k = Math.sin(Math.PI * seg(u, .22, .48));
+      const o = GX.blackout(GX.mixState(a, b, ss(seg(u, .1, 1)), () => u >= .35), k);
+      o.sunU = x; o.bandW = key(u, [[0, a.bandW], [.28, 380], [.88, 380], [1, b.bandW]]);
+      o.sunCol = key(u, [[0, a.sunCol], [.3, [.8, .6, .6]], [.55, [.8, .86, 1]], [1, b.sunCol]]);
+      return o;
+    } },
   HEAD: [-172, 318],   // Moses' head (world): the rays light here
 
   // pillar of fire: an outer amber flame and a gold core; the outline licks in held steps (8 fps)
@@ -116,6 +133,7 @@ window.CLIP = {
     const r = ss(seg(t, T.rays - .2, T.rays + .6));
     st.pts = [[LX[0] + 30, 380, 150, 1.6 * fl, FIRE], [LX[0] + 30, 60, 110, 1.1 * fl, FIRE]];
     if (r > 0) st.pts.push([hx, hy, 26 + 20 * r, 3.4 * r * (1 - .35 * ss(seg(t, T.rays + .6, T.wide))), [1, .92, .6]]);
-    return st;
+    return window.GX.joint(E, this, st, t);
   },
 };
+(window.CLIPS ||= {})[window.CLIP.id] = window.CLIP;   // chapter joints: the previous chapter's tail reads this one

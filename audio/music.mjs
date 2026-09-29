@@ -24,8 +24,8 @@ const RATIOS = [1, 2.32, 4.25, 6.63, 9.38];
 const glass = (t, v, m = 86, pan = 0) => { const f = hz(m); partials(t, RATIOS.map((r, k) => [f * r * (1 + jit(.002)), v * [1, .5, .3, .18, .1][k], [1.6, .9, .45, .25, .15][k]]), pan, 3, SFX, .001); };
 const KINDS = {
   glass: (t, v, o) => glass(t, .22 * v, o.m ?? 86, o.pan ?? 0),
-  crack: (t, v) => {
-    noise(t, .08, .6 * v, 0, SFX, { bp: 3500, q: .5, dec: .015 });                                    // snap
+  crack: (t, v, o) => {   // o.snap scales the first transient (06: kept under the limiter, or AAC overshoots the true peak)
+    noise(t, .08, .6 * v * (o.snap ?? 1), 0, SFX, { bp: 3500, q: .5, dec: .015 });                                    // snap
     glide(t, .6, .5 * v, (u) => 95 - 45 * u, 0, (u) => Math.exp(-u * 7), SFX);                       // the pane's body
     for (let k = 0; k < 16; k++) glass(t + .05 + rnd() * .7, .05 * v * (1 - k / 20), 96 + Math.floor(rnd() * 14), rnd() * 1.4 - .7);   // tinkles
   },

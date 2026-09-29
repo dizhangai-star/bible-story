@@ -193,13 +193,55 @@ window.GX = {
   },
 
   // ---------- shared scene helpers (chapter clips + board.js) ----------
+  // the carved string course (Gen 1:3, Vulgate), in every chapter: Roman capitals, letter-spaced
+  TITLE: [['F\u2009I\u2009A\u2009T\u2003·\u2003L\u2009V\u2009X', 70, 0]],
   // light presets for the darker hall look; o overrides any field
   light(E, k, o = {}) {
     const { SUN } = E;
     const P = { dawn: [SUN.dawn, 2.2, .42, 1.5], noon: [SUN.noon, 2.7, .06, .62], aft: [SUN.aft, 2.35, -.36, 1.3], dusk: [SUN.dusk, 2.6, -.55, 2.1], night: [SUN.moon, .6, 0, 1.2] }[k];
     return { sunCol: P[0], sunI: P[1], sx: P[2], sz: P[3], sunU: 0, bandW: 3200, skyI: k === 'night' ? .05 : .1, skyCol: [.55, .65, .9],
       amb: k === 'night' ? .05 : .075, ambCol: [.62, .64, .82], spill: .5, contrast: .22, vign: .6, haze: .45, raysK: .55,
-      roseI: k === 'night' ? .15 : .8, floorMode: 1, floor: { camD: 2600, eyeH: 320 }, time: 3, ...o };
+      roseI: k === 'night' ? .15 : .8, floorMode: 1, floor: { camD: 2600, eyeH: 320 }, time: 3, inscription: this.TITLE, ...o };
+  },
+  // ---------- chapter joints (Sprint 6) ----------
+  // A chapter's tail hands the picture to the next chapter's frame 0, so the film's plain cut is invisible. The next
+  // chapter is loaded as a `uses` entry and registered in window.CLIPS (last line of every chapter file).
+  // joint(E, A, a, t): past A.J.t0 run A.J.A(E, a, b, u, t) with b = next.state(0), u 0→1 over the tail.
+  joint(E, A, a, t) {
+    const J = A.J, B = window.CLIPS && window.CLIPS[J.next];
+    if (!B || t < J.t0) return a;
+    return J.A.call(A, E, a, B.state(0, E), E.seg(t, J.t0, A.duration), t);
+  },
+  // mix two states by u: numbers and number arrays mix (fields one side lacks mix against the renderer's default),
+  // cam mixes x, y and log zoom, point lights cross-fade (4 max), anything else switches at u .5.
+  // lancets: take(i) true → lancet i shows b's pane.
+  DEF: { sweep: [0, 700, 0, 806], skew: .06, bloom: .55, thr: .5, patchK: 1.1, gild: 0, contrast: .12, vign: .4, haze: .55, spill: 1, raysK: 1 },
+  mixState(a, b, u, take) {
+    const num = (v) => typeof v === 'number' || (Array.isArray(v) && v.every(num));
+    const mix = (p, q) => typeof p === 'number' ? p + (q - p) * u : p.map((v, j) => mix(v, q[j]));
+    const o = {};
+    for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      if (k === 'lancets' || k === 'pts' || k === 'cam') continue;
+      const p = a[k] ?? this.DEF[k], q = b[k] ?? this.DEF[k];
+      const v = p !== undefined && q !== undefined && num(p) && num(q) && (!Array.isArray(p) || p.length === q.length) ? mix(p, q) : (u < .5 ? p : q);
+      if (v !== undefined) o[k] = v;
+    }
+    o.cam = this.camMix(a.cam, b.cam, u);
+    o.pts = this.fadePts(a.pts, 1 - u).concat(this.fadePts(b.pts, u)).sort((p, q) => q[3] - p[3]).slice(0, 4);
+    o.lancets = (a.lancets || []).map((L, i) => (take ? take(i) : u >= .5) ? b.lancets[i] : L);
+    return o;
+  },
+  camMix: ([ax, ay, az], [bx, by, bz], u) => [ax + (bx - ax) * u, ay + (by - ay) * u, az * Math.pow(bz / az, u)],
+  fadePts: (pts, k) => (pts || []).map((p) => [p[0], p[1], p[2], p[3] * k, p[4]]).filter((p) => p[3] > .01),
+  // the unlit hall: the window dark, the stone just readable (the moment the glass can change unseen)
+  dark(s, k = 1) {
+    const f = 1 - k;
+    return { ...s, sunI: s.sunI * f, skyI: s.skyI * (1 - .6 * k), roseI: s.roseI * (1 - .8 * k), amb: s.amb * (1 - .35 * k), pts: this.fadePts(s.pts, f) };
+  },
+  // the hall blacked out (the glass shows nothing at k 1, the stone barely): a swap here is never seen
+  blackout(s, k) {
+    const f = 1 - k;
+    return { ...s, sunI: s.sunI * f, skyI: s.skyI * f, roseI: s.roseI * f, amb: s.amb * (1 - .7 * k), pts: this.fadePts(s.pts, f) };
   },
   // pose: an FPOSE name, or [a, b, u] = blend of two poses (angles mixed, face switches at u .5); u is stepped by the caller
   pose(E, p) {

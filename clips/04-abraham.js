@@ -4,15 +4,33 @@
 // faintly starlit. Beats (TREATMENT §4), one continuous camera: 04-1 low on Abraham, slow tilt up · 04-2 pull back.
 window.CLIP = {
   id: '04-abraham',
-  uses: ['_glass'],
-  duration: 15,
-  timing: { fadeIn: [0, 0.5], fade: [14.3, 15] },
+  uses: ['_glass', '05-exodus'],
+  duration: 18,
+  timing: { fadeIn: [-1, 0], fade: [18, 18] },   // no fades: the joints hand the picture over (Sprint 6)
   caps: [
     [0.9, 4.9, 'Look now toward heaven, and tell the stars, if thou be able to number them.', '你向天觀看，數算眾星，能數得過來麼？'],
-    [5.8, 8.9, 'So shall thy seed be.', '你的後裔將要如此。'],
+    [5.8, 8.9, 'So shall thy descendants be.', '你的後裔將要如此。'],
     [9.8, 14.0, 'And he believed in the LORD; and he counted it to him for righteousness.', '亞伯蘭信耶和華，耶和華就以此為他的義。'],
+    [14.5, 17.4, 'The Fifth Window · Exodus', '第五扇窗 · 出埃及'],   // the next chapter's name, while its glass comes (Sprint 6)
   ],
   T: { up: 1.6, first: 1.8, pull: 5.6, many: 6.4, wide: 11.6 },
+  // J4 · "so shall thy seed be" → that people, fleeing: one star in lancet I becomes the pillar of fire
+  J: { next: '05-exodus', t0: 14.2,
+    // a star becomes fire: the sky goes out but one star low in lancet I, which warms and swells; under its glare
+    // the window becomes the night of the Exodus and the camera arrives on the pillar
+    A(E, a, b, u) {
+      const { ss, seg, lerp, LX } = E, GX = window.GX, on = ss(seg(u, .04, .2)), grow = ss(seg(u, .25, .5)), off = ss(seg(u, .6, .95));
+      const o = GX.mixState(GX.dark(a, ss(seg(u, 0, .4))), GX.dark(b, 1 - ss(seg(u, .56, 1))), ss(seg(u, .05, 1)), () => u >= .54);
+      // the camera pushes into the star until only lancet I is in frame (the others leave it), holds in its glare while
+      // the glass changes, and pulls back from the fire to the pillar and Moses
+      const C = [LX[0] - 50, 380, 4.4];
+      o.cam = u < .48 ? GX.camMix(a.cam, C, ss(seg(u, 0, .48))) : u < .6 ? C : GX.camMix(C, b.cam, ss(seg(u, .6, 1)));
+      // the star: small and white, alone as the sky goes out; it warms and swells into the fire's glow, a white-out
+      const col = [1, lerp(.95, .66, grow), lerp(.85, .3, grow)];
+      o.pts = [[LX[0] + 30, 380, lerp(10, 300, grow), lerp(7, 4, grow) * on * (1 - off), col], ...o.pts].slice(0, 4);
+      o.expo = 1.1 + 4 * Math.pow(Math.sin(Math.PI * seg(u, .42, .66)), 3);
+      return o;
+    } },
   N0: 11,   // the first stars, lit one by one above Abraham
 
   // the sky of lancets I–IV: a few cut stars and many pinholes, in the order they light. The first N0 are over
@@ -71,7 +89,7 @@ window.CLIP = {
     const sky = this.sky(E), n = this.lit(E.step(t));
     st.pts = [];
     if (n > 0 && n <= this.N0) { const q = sky[n - 1], f = (t - T.first) / .42 % 1; st.pts.push([q.x, q.y, 34, 3.2 * (1 - f) * (1 - f), [1, .95, .8]]); }
-    return st;
+    return window.GX.joint(E, this, st, t);
   },
 };
 // sound: a soft glass note as each of the first stars lights (rising), a shimmer as they multiply, a low bell at the end
@@ -80,4 +98,6 @@ window.CLIP.sfx = [
   ...[...Array(window.CLIP.N0)].map((_, k) => [window.CLIP.T.first + k * .42, 'glass', { m: [79, 81, 83, 86, 88, 91, 93, 95, 98, 100, 103][k], v: .35 + .02 * k }]),
   [6.4, 'air', { d: 5.0, v: .7 }], ...[0, 1, 2, 3, 4, 5, 6, 7].map((k) => [6.6 + k * .55, 'glass', { m: 91 + (k * 5) % 12, v: .25 }]),
   [10.4, 'bell', { m: 43, v: .7 }],
+  [14.9, 'glass', { m: 91, v: .45 }], [16.0, 'air', { d: 2.0, v: .8 }],   // J4: the last star; the fire's roar before it
 ];
+(window.CLIPS ||= {})[window.CLIP.id] = window.CLIP;   // chapter joints: the previous chapter's tail reads this one

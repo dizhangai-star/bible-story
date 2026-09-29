@@ -7,6 +7,14 @@
 import { panG, hz, voices } from '../../_kit/audio/dsp.mjs';
 
 const SCORES = {
+  // Opening card: an open D in the dark under the title (the glass note at 0.9 is its spark), gone before 01's spark.
+  '00-title'({ organ, harp }) {
+    organ(.6, 5.0, [38, 45], .016, { atk: 2.0, amp: (u) => 1 - .5 * u }); harp(1.6, 62, .06); harp(2.35, 69, .05); harp(3.1, 74, .05);
+  },
+  // End card: after the dawn's D major, a low D and a G that does not resolve (the question stays open).
+  '08-end'({ organ, recorder }) {
+    organ(.4, 5.6, [38, 50, 57], .016, { atk: 1.2 }); organ(2.4, 3.6, [43, 55, 59], .012, { atk: 1.5 }); recorder(2.6, 2.4, 71, .035);
+  },
   // Darkness; the glass foley has the spark (0.8), the six day notes D5…B5 and the bell on the light (7.0).
   '01-genesis'({ organ, recorder, harp }, A) {
     organ(1.0, 6.0, [38, 45], .028, { atk: 2.5, amp: (u) => .5 + .5 * u });                    // drone grows under the days
@@ -21,6 +29,9 @@ const SCORES = {
     organ(10.8, 1.4, [48, 55, 60, 64], .022); recorder(10.8, 1.3, 67, .065);
     organ(12.2, 2.6, [38, 50, 57, 62], .024, { amp: (u) => 1 - .4 * u }); recorder(12.2, 2.0, 62, .06);
     [50, 57, 62].forEach((m, k) => harp(12.2 + k * .375, m, .12));
+    // J1 (Sprint 6): under the cloud the harmony moves to G, the garden's key; the recorder leads to 02's D5
+    organ(14.6, 2.8, [43, 50, 55], .016, { atk: 1.4 }); harp(15.2, 55, .07); harp(15.95, 59, .06); harp(16.7, 62, .06);
+    recorder(16.3, .9, 71, .04);
   },
 
   // G major pastoral (glass D5 · F#5 · G5) → the push darkens to E7 under the glass G#5 (8.6) → the music cuts at 9.4
@@ -38,6 +49,8 @@ const SCORES = {
     organ(T.out - .2, 17.2 - T.out, [38, 50, 53, 57], .022, { atk: 1.8, amp: (u) => 1 - .3 * u });   // D minor, low
     harp(T.out, 50, .1); harp(13.7, 45, .08); harp(15.2, 50, .07);
     line([[12.8, .72, 69], [13.55, .72, 67], [14.3, .72, 65], [15.05, .72, 64], [15.8, 1.4, 62]], .055);   // falls to D
+    // J2 (Sprint 6): a low D pedal holds in the dark, into the storm's D minor
+    organ(17.0, 2.4, [38, 45], .014, { atk: 1.2 });
   },
 
   // Oppression → surging water (a harp ostinato in eighths, D minor → Bb → C) → hope: F with Noah, the dove lands on
@@ -59,6 +72,9 @@ const SCORES = {
     arp(14.2, [43, 50, 55, 59, 62], .375, .09);
     organ(16.0, 3.4, [38, 50, 57, 62, 69], .024, { amp: (u) => 1 - .35 * u });                   // home, to the floor
     line([[14.4, 1.0, 71], [15.4, .72, 69], [16.15, .72, 67], [16.9, .72, 69], [17.65, 1.6, 74]], .055);
+    // J3 (Sprint 6): the sun sets on the floor (G, recorder falling), then night: a low open G, Abraham's key
+    organ(19.2, 1.8, [43, 55, 59, 62], .018, { atk: .6, amp: (u) => 1 - .4 * u }); line([[19.3, .9, 71], [20.2, 1.2, 67]], .04);
+    organ(20.8, 2.6, [31, 43], .016, { atk: 1.2 }); harp(21.6, 50, .06); harp(22.35, 55, .05);
   },
 
   // Night, G major: the stars are the melody (glass G pentatonic climbing from 1.8); the score stays low and slow —
@@ -73,6 +89,8 @@ const SCORES = {
     organ(10.4, 3.9, [43, 50, 55, 59, 62, 67], .026, { atk: .5, amp: (u) => 1 - .35 * u });      // G — righteousness
     line([[6.4, 1.5, 71], [7.9, .72, 69], [8.65, .72, 67], [9.4, .95, 69], [10.4, 1.5, 74], [11.9, 2.2, 71]], .055);
     [43, 50, 55, 59, 62].forEach((m, k) => harp(10.4 + k * .375, m, .08));
+    // J4 (Sprint 6): the last star (glass, clip sfx) over a G that darkens to D minor as it becomes the fire
+    organ(14.4, 1.4, [43, 50], .014, { atk: .8 }); organ(15.6, 2.0, [38, 45, 50], .016, { atk: 1.0, amp: (u) => .7 + .5 * u });
   },
 
   // Pursuit: a driving low harp ostinato (dotted, D minor → Bb → C) under a dark organ, crescendo; Moses (4.8): it stops;
@@ -97,6 +115,9 @@ const SCORES = {
     organ(T.open, 4.9, [43, 50, 55, 59, 62, 67], .034, { atk: .3, amp: (u) => 1 - .35 * u });    // G — the walls stand
     arp(T.open, [43, 50, 55, 59, 62, 67], .375, .1);
     line([[12.4, 1.5, 74], [13.9, .72, 71], [14.65, .72, 72], [15.4, .72, 69], [16.15, 1.1, 67]], .07);
+    // J5 (Sprint 6): dawn after the crossing: G → G minor → Bb, 06's dark key, as the band settles on the giant
+    organ(17.3, 1.5, [43, 55, 58, 62], .018, { atk: .5 }); recorder(17.4, 1.3, 70, .045);
+    organ(18.8, 2.4, [34, 46, 53], .018, { atk: .8 }); harp(18.8, 46, .07); harp(19.55, 53, .06);
   },
 
   // Fear: heavy low steps (harp, every 1.5 s) under a Bb → A-major organ that swells to the whip pan (5.2) and cuts;
@@ -115,6 +136,9 @@ const SCORES = {
     organ(T.pull, 3.0, [43, 50, 55, 59, 62], .026, { atk: .8, amp: (u) => 1 - .3 * u });          // G — the giant kneels
     arp(T.pull, [43, 50, 55, 59, 62], .375, .08);
     line([[12.6, 1.0, 71], [13.6, .72, 69], [14.35, 1.0, 67]], .055);
+    // J6 (Sprint 6): sunset: G → Em as the light slides off, then the night's low D (07's drone)
+    organ(15.2, 1.5, [43, 50, 55, 59], .018, { amp: (u) => 1 - .3 * u }); organ(16.4, 1.2, [40, 52, 55, 59], .016);
+    recorder(15.4, .9, 66, .04); recorder(16.4, 1.3, 64, .035); organ(17.2, 2.2, [38, 45], .016, { atk: 1.0 });
   },
 
   // Night stillness (D drone); the mends: G under the first (glass D G D A), Em under the second (E A G D), a soft harp
@@ -143,10 +167,13 @@ const SCORES = {
   },
 };
 
+const RING = 1.2;
 export function score({ SR, rnd, bus, F }) {
   const [BL, BR] = bus, done = [];
   for (const c of F.clips) {
-    const n = Math.ceil(c.duration * SR), L = new Float32Array(n), R = new Float32Array(n), V = voices({ sr: SR, n, rnd, music: [L, R] });
+    // a clip without a fade (a joint, Sprint 6) lets its music ring RING s into the next chapter, dying away
+    const [f0, f1] = c.A.timing.fade, ring = f1 > f0 ? 0 : RING;
+    const n = Math.ceil((c.duration + ring) * SR), L = new Float32Array(n), R = new Float32Array(n), V = voices({ sr: SR, n, rnd, music: [L, R] });
     // Sustained additive voice: parts [[ratio, amp]], ADSR-ish (atk, rel after d), vibrato (cents, fading in after
     // .25 s), chorus (two copies ± cents), breath (low-passed noise), amp(u) = level over the note (u 0..1).
     function tone(t, d, m, o = {}) {
@@ -182,9 +209,9 @@ export function score({ SR, rnd, bus, F }) {
     if (SCORES[c.id]) { SCORES[c.id](I, c.A); done.push(c.id); }
     else I.organ(.5, c.duration - 1.5, [38, 45], .02, { atk: 1.5, rel: 1 });                    // not scored yet: a quiet bed
     // the clip's fade cuts its music; lay it at the clip's start
-    const [f0, f1] = c.A.timing.fade, s0 = Math.floor(c.start * SR);
+    const s0 = Math.floor(c.start * SR);
     for (let i = 0; i < n && s0 + i < BL.length; i++) {
-      const g = Math.min(1, Math.max(0, (f1 - i / SR) / (f1 - f0)));
+      const g = ring ? Math.min(1, Math.max(0, 1 - (i / SR - f1) / ring)) : Math.min(1, Math.max(0, (f1 - i / SR) / (f1 - f0)));
       BL[s0 + i] += L[i] * g; BR[s0 + i] += R[i] * g;
     }
   }
