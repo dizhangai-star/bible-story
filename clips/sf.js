@@ -12,7 +12,7 @@ window.CLIP = {
   ],
   panes(E, t, which) {
     const { COL, roundel, sunDisc, hills, tree, dove, circle } = E, G = window.GX;
-    const eden = { content: (P, cx) => {
+    const eden = { glass: G.glass(E, 'eden'), content: (P, cx) => {
       roundel(P, cx, -150, 78, COL.sky, 7000); sunDisc(P, cx, -150, 28, COL.gold2, 7030, 12);
       hills(P, cx, 540, [{ y: -10, a: 12, ph: 1, c: COL.olive }, { y: 40, a: 8, ph: 3, c: COL.green2 }], 7100);
       G.bigTree(E, P, cx + 10, 560, 1, 7200);
@@ -20,14 +20,14 @@ window.CLIP = {
       if (which === 'eden') G.drawCracks(E, P, G.cracks(E, cx, cx - 50, 310, 31), 1, false);
       if (which === 'night') G.drawCracks(E, P, G.cracks(E, cx, cx - 50, 310, 31), 1, true);
     } };
-    const flood = (k) => ({ content: (P, cx) => {
+    const flood = (k) => ({ glass: G.glass(E, 'flood'), content: (P, cx) => {
       P.piece(new Path2D(`M${cx - 160} -400 H${cx + 160} V660 H${cx - 160} Z`), k % 2 ? COL.blue2 : COL.cobalt, { id: 7400 + k, lead: 0, mat: false });
       G.rainbow(E, P, 0, 420, 520, 34, 7500 + k * 10);
       G.waves(E, P, cx, 470, k * 1.3, 7600 + k * 10);
       if (k === 1) G.ark(E, P, cx, 470, 1, 7700);
       if (k === 2) dove(P, cx - 10, 120, 1, 7710);
     } });
-    const promise = { content: (P, cx) => {   // a lamp that keeps burning: small, centred, the only warm glass at night
+    const promise = { glass: G.glass(E, 'promise'), content: (P, cx) => {   // a lamp that keeps burning: small, centred, the only warm glass at night
       roundel(P, cx, -150, 78, COL.deepblue, 7800);
       for (let k = 0; k < 6; k++) window.GX.star(E, P, cx + Math.cos(k * 1.05) * 50, -150 + Math.sin(k * 1.05) * 50, 8, 7810 + k);
       P.piece(E.smooth([[cx - 40, 420, 1], [cx + 40, 420, 1], [cx + 26, 380], [cx - 26, 380]]), COL.gold, { id: 7850, lead: 4.5, matW: 6 });

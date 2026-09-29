@@ -3,6 +3,7 @@
 // World units: rose (0,-560) r175; lancets LX = [-510,-170,170,510], 300 wide, apex -320, bottom 640; floor 900.
 window.CLIP = {
   id: '01-genesis',
+  uses: ['_glass'],
   duration: 15,
   timing: { fadeIn: [0, 0.3], fade: [14.3, 15] },
   glyphs: '光之窗',
@@ -25,24 +26,24 @@ window.CLIP = {
     const flap = Math.floor(step(t) * 2) % 2;          // glass wings: two held poses, 4 per second
     const star = (P, x, y, r, id) => P.piece(smooth([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => { const a = -Math.PI / 2 + k * Math.PI / 5, q = k % 2 ? r * .45 : r; return [x + Math.cos(a) * q, y + Math.sin(a) * q, 1]; })), COL.gold2, { id, lead: 3, mat: false });
     const fish = (P, x, y, s, id) => P.piece(smooth([[x - 26 * s, y], [x - 6 * s, y - 11 * s], [x + 16 * s, y - 6 * s], [x + 24 * s, y - 13 * s, 1], [x + 22 * s, y, 1], [x + 24 * s, y + 13 * s, 1], [x + 16 * s, y + 6 * s], [x - 6 * s, y + 11 * s]]), COL.gold, { id, lead: 4, matW: 5, paint: g => { g.fillStyle = 'rgba(44,26,12,.88)'; g.beginPath(); g.arc(x - 16 * s, y - 2 * s, 2, 0, 7); g.fill(); } });
+    const glass = window.GX.glass(E, 'genesis');
     return [
-      { content: (P, cx) => {   // I · 光 — sun in the roundel, night field with the moon and stars below
+      { glass, content: (P, cx) => {   // I · 光 — sun in the roundel, night field with the moon and stars below
         roundel(P, cx, -150, 78, COL.sky, 6000); sunDisc(P, cx, -150, 30, COL.gold2, 6030, 12);
-        P.piece(smooth([[cx - 150, 330, 1], [cx + 150, 330, 1], [cx + 150, 660, 1], [cx - 150, 660, 1]]), COL.deepblue, { id: 6100, lead: 5.5, matW: 14 });
         P.piece(circle(cx - 20, 440, 44), COL.white, { id: 6110, lead: 4.5, matW: 8 });
         P.piece(circle(cx + 2, 428, 40), COL.deepblue, { id: 6111, lead: 4.5, matW: 10 });
         [[cx + 64, 390, 11], [cx + 90, 470, 8], [cx - 84, 520, 9], [cx + 30, 560, 12], [cx - 70, 372, 7], [cx + 76, 590, 7]].forEach(([x, y, r], k) => star(P, x, y, r, 6120 + k));
       } },
-      { content: (P, cx) => {   // II · 水 — the Spirit (a dove) over the face of the waters
+      { glass, content: (P, cx) => {   // II · 水 — the Spirit (a dove) over the face of the waters
         roundel(P, cx, -150, 78, COL.deepblue, 6200); dove(P, cx - 2, -150, flap, 6230);
         hills(P, cx, 470, [{ y: -40, a: 14, ph: step(t) * 1.2, c: COL.sky }, { y: 20, a: 12, ph: 2 + step(t) * .9, c: COL.blue2 }, { y: 80, a: 10, ph: 4 + step(t) * .7, c: COL.cobalt }], 6300);
       } },
-      { content: (P, cx) => {   // III · 地 — dry land, grass and trees
+      { glass, content: (P, cx) => {   // III · 地 — dry land, grass and trees
         roundel(P, cx, -150, 78, COL.sky, 6400); sunDisc(P, cx + 26, -130, 24, COL.gold, 6430, 12);
         hills(P, cx, 520, [{ y: -30, a: 16, ph: 1, c: COL.olive }, { y: 40, a: 10, ph: 3, c: COL.green }], 6500);
         tree(P, cx - 70, 506, 1.05, 6520); tree(P, cx + 60, 520, .85, 6524);
       } },
-      { content: (P, cx) => {   // IV · 生 — birds of the air and fish of the sea
+      { glass, content: (P, cx) => {   // IV · 生 — birds of the air and fish of the sea
         roundel(P, cx, -150, 78, COL.purple, 6600); dove(P, cx - 30, -170, flap, 6630); dove(P, cx + 30, -128, 1 - flap, 6634);
         P.piece(smooth([[cx - 150, 470, 1], [cx - 40, 456], [cx + 60, 476], [cx + 150, 462, 1], [cx + 150, 660, 1], [cx - 150, 660, 1]]), COL.cobalt, { id: 6700, lead: 5.5, matW: 12 });
         fish(P, cx - 40 + Math.sin(step(t) * 1.3) * 10, 540, 1.1, 6710); fish(P, cx + 50 - Math.sin(step(t) * 1.1) * 8, 600, .8, 6711);
@@ -56,7 +57,7 @@ window.CLIP = {
     // rose: the centre sparks at 0.8; petals light in pairs, clockwise from the top, one pair per day (stepped glass)
     const spark = ss(seg(t, .8, 1.3));
     const petalLit = (i) => { const j = ((i - 9) % 12 + 12) % 12, d = A.DAYS[Math.floor(j / 2)]; return ss(seg(step(t, 12), d, d + .35)); };
-    const rose = { lit: (q, k) => k === 0 ? .1 + .9 * spark : petalLit(Math.floor((k - 1) / 3)) * .97 + .03 * spark };
+    const rose = { lit: (q) => q.petal < 0 ? .1 + .9 * spark : petalLit(q.petal) * .97 + .03 * spark };
     const roseI = key(t, [[0, 0], [.8, 0], [1.3, 1.5, ss], [2.4, 1.1], [6.2, 1.4], [TL, 1.9], [9.5, 1.3], [15, 1.3]]);
     // the sun: a knife-thin band enters at the left and opens over every lancet
     const u = seg(t, TL - .2, TL + 2.4);

@@ -3,12 +3,10 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**PAUSED by the user (2026-09-29) before Sprint 2.** Storyboard v1 **approved** → TREATMENT.md §4 (`docs/storyboard.png`,
-`clips/board.js` holds every shot's key-frame state; start chapter clips from it). Exodus is at night (pillar of fire). Cast sheet v2 **approved** (iconography pass, see Notes): `frames/castsheet.png` (also `docs/`), dev clip
-`clips/cast.js`, rig `sg/figure.js` (costumes in `CAST`, poses in `FPOSE`). After approval: **Sprint 2 · 02-eden,
-03-flood** (see TREATMENT clip list), then compile a silent draft for review. User is making the Suno track.
-Sample approved; darker hall look approved (user left it to Claude; see Decisions). Code on GitHub:
-https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
+**Sprint 1 (cast · storyboard · glass look) SIGNED OFF by the user 2026-09-29.** Paused; next is **Sprint 2 ·
+02-eden, 03-flood** when the user says go: build each chapter clip from its shots in `clips/board.js` (key-frame state
+per shot) + TREATMENT §4, then a silent draft for review. User is making the Suno track (SUNO.md).
+Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
 
 ## Decisions (locked)
 - **Style:** stained glass, lemo-opuscar renderer vendored in `sg/` (see `sg/README.md`); film-local engine, kit untouched.
@@ -21,11 +19,18 @@ https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` req
 - **Hall look (darker, sacred):** `amb` ≈ .075 after sunrise, `ambCol [.62,.64,.82]`, `spill .5` (glow thrown on the
   wall by lit panes, new compositor uniform), `contrast .22`, `vign .62`, `haze .45`, `raysK .55`. Title: `gild .18`
   with the sweep light parked on the carving (`sweep [0, 700, .55, BOT+166]`). Before/after: `docs/look-compare.png`.
+- **Glass colour (approved):** fine quarries (15) coloured by what the region depicts — arch head = warm ornament,
+  sky = blues (night: deep blue/violet), ground = greens/earth/sand, sea = blue/teal; ~4 % contrast accents; figures
+  stand on the cool sky zone. One key per chapter: `GX.KEYS` in `clips/_glass.js`; a pane opts in with
+  `{ glass: GX.glass(E, '<chapter>') }`. Pearls turn gold/white/green/sky. Before/after: `docs/glass-compare.png`.
+- **Rose (approved):** petals in their creation-day colours (gold · cobalt · emerald · amber · teal · ruby, pairs
+  clockwise from the top) + a 36-piece jewel ring; every rose part has `.petal` for day-by-day lighting.
+- **Storyboard (approved):** TREATMENT.md §4 / `docs/storyboard.png`; Exodus at night.
 - **God is never drawn; God is the light.** Art all drawn in code.
 
 ## Sprints
 - [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames, SUNO.md
-- [x] **1 · Cast sheet** v2 approved 2026-09-29
+- [x] **1 · Cast sheet v2 · storyboard v1 · glass colour + rose** — signed off 2026-09-29
 - [ ] **2 · 02-eden, 03-flood** · [ ] **3 · 04-abraham, 05-exodus** · [ ] **4 · 06-david, 07-promise**
 - [ ] **5 · Sound**: Suno track in, retime cuts to its beats, foley pass, mix
 - [ ] **6 · Deliver**: compile, check, srt, poster

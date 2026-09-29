@@ -42,7 +42,7 @@ export function lozenges(box, d, seed) {
       if ((a + b) & 1) continue;
       const pts = [J(a - 1, b), J(a, b - 1), J(a + 1, b), J(a, b + 1)];
       const h = hash(a * 3.3 + b * 7.9 + seed);
-      out.push({ pts, path: softPoly(pts, .12), c: [a * d, b * d], col: h < .1 ? COL.blue2 : h < .2 ? COL.deepblue : COL.cobalt, id: seed * 1000 + (a + 500) * 97 + b, curl: hash(a * 5.1 + b * 2.3 + seed) });
+      out.push({ pts, path: softPoly(pts, .12), c: [a * d, b * d], d, h, h2: hash(a * 1.7 + b * 5.3 + seed * 7), col: h < .1 ? COL.blue2 : h < .2 ? COL.deepblue : COL.cobalt, id: seed * 1000 + (a + 500) * 97 + b, curl: hash(a * 5.1 + b * 2.3 + seed) });
     }
   return out;
 }
@@ -51,22 +51,39 @@ export function vineCurl(g, c, d, h) {
   brush(g, [[x - r * s, y + r * .6], [x - r * .2 * s, y - r * .4], [x + r * .5 * s, y - r * .2], [x + r * .35 * s, y + r * .35], [x, y + r * .15]], d * .09, { w0: .3, w1: .15, color: 'rgba(30,24,40,.42)' });
   g.fillStyle = 'rgba(30,24,40,.38)'; g.beginPath(); g.arc(x - r * s, y + r * .6, d * .06, 0, 7); g.fill();
 }
-const MOS = LX.map((cx, i) => {
+const mosOf = (cx, i, d) => {
   const box = [cx - LW / 2 + BORDER - 4, APEX - 4, cx + LW / 2 - BORDER + 4, BOT - BORDER + 4];
-  const cells = lozenges(box, 23, 11 + i * 7).filter(c => c.c[0] > box[0] - 30 && c.c[0] < box[2] + 30);
+  const cells = lozenges(box, d, 11 + i * 7).filter(c => c.c[0] > box[0] - 30 && c.c[0] < box[2] + 30);
   const pearls = lancetSamples(cx, RUBY / 2, 21);
   const band = lancetSamples(cx, (RUBY + BORDER) / 2, 3.2);
   return { cells, pearls, band, outer: lancetPath(cx, 0), mid: lancetPath(cx, RUBY), inner: lancetPath(cx, BORDER) };
-});
+};
+const MOS = LX.map((cx, i) => mosOf(cx, i, 23));
+// bible-story: finer quarries (more, smaller pieces) for the many-coloured mosaic look; built on first use
+const MOSF = [];
+const mos = (i, fine) => fine ? (MOSF[i] ||= mosOf(LX[i], i, fine === true ? 15 : fine)) : MOS[i];
+// bible-story: a richer rose. Each part carries .petal (0..11, the petal it belongs to; -1 = the sun) so a film can
+// light it petal by petal. Petals take the colour of their creation day (pairs, clockwise from the top): 1 light
+// (gold) · 2 sky & waters (cobalt) · 3 land & plants (emerald) · 4 sun, moon, stars (amber) · 5 fish & birds (teal)
+// · 6 beasts & man (ruby); an outer ring of 36 jewel segments; small roundels between petals in turning colours.
+const DAYC = [['#eab640', '#dc9a22'], ['#1d3a9c', '#2a52b0'], ['#2f7f36', '#4f8f2a'], ['#d9861c', '#c8452a'], ['#1f7a7a', '#2a8f9a'], ['#a8101c', '#8a1030']];
+const RING = ['#a8101c', '#eab640', '#1d3a9c', '#2f7f36', '#632a63', '#1f7a7a'];
 const ROSEG = (() => {
-  const { x, y, r } = ROSE, parts = [];
-  parts.push({ p: circle(x, y, r * .26), c: COL.gold, id: 5001, kind: 'sun' });
+  const { x, y, r } = ROSE, parts = [], TAU = Math.PI * 2;
+  const dayOf = (i) => Math.floor((((i - 9) % 12) + 12) % 12 / 2);
+  const near = (ang) => ((Math.round(ang / TAU * 12) % 12) + 12) % 12;
+  parts.push({ p: circle(x, y, r * .26), c: COL.gold, id: 5001, kind: 'sun', petal: -1 });
+  for (let k = 0; k < 36; k++) {   // outer jewel ring (drawn under the roundels)
+    const a0 = k / 36 * TAU + .012, a1 = (k + 1) / 36 * TAU - .012, p = new Path2D();
+    p.arc(x, y, r * .965, a0, a1); p.arc(x, y, r * .81, a1, a0, true); p.closePath();
+    parts.push({ p, c: RING[k % 6], id: 5100 + k, petal: near((a0 + a1) / 2), ring: 1 });
+  }
   for (let i = 0; i < 12; i++) {
-    const a = i / 12 * Math.PI * 2, a0 = a - Math.PI / 12 * .82, a1 = a + Math.PI / 12 * .82, r0 = r * .33, r1 = r * .78;
-    parts.push({ p: smooth([[x + Math.cos(a0) * r0, y + Math.sin(a0) * r0, 1], [x + Math.cos(a0) * r1 * .92, y + Math.sin(a0) * r1 * .92], [x + Math.cos(a) * r1, y + Math.sin(a) * r1], [x + Math.cos(a1) * r1 * .92, y + Math.sin(a1) * r1 * .92], [x + Math.cos(a1) * r0, y + Math.sin(a1) * r0, 1]]), c: i % 2 ? COL.ruby : COL.cobalt, id: 5010 + i });
+    const a = i / 12 * TAU, a0 = a - Math.PI / 12 * .82, a1 = a + Math.PI / 12 * .82, r0 = r * .33, r1 = r * .78, d = dayOf(i);
+    parts.push({ p: smooth([[x + Math.cos(a0) * r0, y + Math.sin(a0) * r0, 1], [x + Math.cos(a0) * r1 * .92, y + Math.sin(a0) * r1 * .92], [x + Math.cos(a) * r1, y + Math.sin(a) * r1], [x + Math.cos(a1) * r1 * .92, y + Math.sin(a1) * r1 * .92], [x + Math.cos(a1) * r0, y + Math.sin(a1) * r0, 1]]), c: DAYC[d][i % 2], id: 5010 + i, petal: i });
     const b = a + Math.PI / 12, rr = r * .88;
-    parts.push({ p: circle(x + Math.cos(b) * rr, y + Math.sin(b) * rr, r * .075), c: i % 2 ? COL.gold : COL.white, id: 5030 + i });
-    parts.push({ p: circle(x + Math.cos(a) * r * .9, y + Math.sin(a) * r * .9, r * .055), c: COL.green, id: 5050 + i });
+    parts.push({ p: circle(x + Math.cos(b) * rr, y + Math.sin(b) * rr, r * .075), c: i % 2 ? COL.gold : COL.white, id: 5030 + i, petal: i });
+    parts.push({ p: circle(x + Math.cos(a) * r * .9, y + Math.sin(a) * r * .9, r * .055), c: [COL.green, COL.purple, COL.sky][i % 3], id: 5050 + i, petal: i });
   }
   return parts;
 })();
@@ -165,10 +182,12 @@ function carve(S, ins, gild) {
 }
 
 // ---------- lancet contents ----------
-export function mosaic(P, i, cullRect) {
-  const m = MOS[i];
-  P.piece(m.outer, COL.ruby, { id: 900 + i, lead: 6, mat: false, edge: 5 });
-  P.piece(m.mid, COL.white, { id: 910 + i, lead: 5, mat: false, edge: 4, paint: g => {   // running vine scroll painted on the white fillet
+// o (bible-story, all optional; defaults = the demo): quarry(cell, i) → colour, pearl(k, i) → colour, band, fillet,
+// fine (smaller quarries)
+export function mosaic(P, i, o = {}) {
+  const m = mos(i, o.fine);
+  P.piece(m.outer, o.band || COL.ruby, { id: 900 + i, lead: 6, mat: false, edge: 5 });
+  P.piece(m.mid, o.fillet || COL.white, { id: 910 + i, lead: 5, mat: false, edge: 4, paint: g => {   // running vine scroll painted on the white fillet
     const b = m.band; g.lineCap = 'round';
     for (let k = 2; k < b.length - 2; k += 1) {
       const p = b[k], q = b[k + 1], dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L;
@@ -178,10 +197,10 @@ export function mosaic(P, i, cullRect) {
     }
   } });
   P.save(); P.g.clip(m.inner); if (P.s !== P.g) P.s.clip(m.inner);
-  for (const c of m.cells) P.piece(c.path, c.col, { id: c.id, lead: 4.2, mat: false, edge: 6, paint: g => vineCurl(g, c.c, 46, c.curl) });
+  for (const c of m.cells) P.piece(c.path, o.quarry ? o.quarry(c, i) : c.col, { id: c.id, lead: c.d < 20 ? 3.4 : 4.2, mat: false, edge: 6, paint: g => vineCurl(g, c.c, c.d * 2, c.curl) });
   P.restore();
   P.lead(m.inner, 6);
-  for (const [x, y] of m.pearls) P.piece(circle(x, y, 6), COL.gold, { id: 700 + x * 3 + y, lead: 3, mat: false });
+  m.pearls.forEach(([x, y], k) => P.piece(circle(x, y, 6), o.pearl ? o.pearl(k, i) : COL.gold, { id: 700 + x * 3 + y, lead: 3, mat: false }));
 }
 export function roundel(P, cx, cy, r, sky, id) {
   P.piece(circle(cx, cy, r + 12), COL.gold, { id, lead: 6, mat: false });
@@ -232,7 +251,7 @@ export function dove(P, x, y, flap, id) {
 // state: { knight: {pose, x, y, s, flip, off, face}, dragon: {...}, scroll, doveX, flap, ember }
 export function drawLancet(P, i, st = {}) {
   const cx = LX[i];
-  mosaic(P, i);
+  mosaic(P, i, st.glass || {});
   P.save(); P.g.clip(MOS[i].inner); if (P.s !== P.g) P.s.clip(MOS[i].inner);
   const base = P.g.getTransform();
   if (st.content) st.content(P, cx, base);   // bible-story: per-film pane content

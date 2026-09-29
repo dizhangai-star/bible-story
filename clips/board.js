@@ -64,18 +64,17 @@ window.CLIP = {
   bg(E, P, cx, col, id) { P.piece(new Path2D(`M${cx - 160} -400 H${cx + 160} V660 H${cx - 160} Z`), col, { id, lead: 0, mat: false }); },
   garden(E, P, cx, id) { E.hills(P, cx, 540, [{ y: -10, a: 12, ph: id % 7, c: E.COL.olive }, { y: 40, a: 8, ph: 3, c: E.COL.green2 }], id); },
   stars(E, P, cx, id, n = 18) {
-    const r = E.mulberry(id); this.bg(E, P, cx, E.COL.deepblue, id);
+    const r = E.mulberry(id);
     for (let k = 0; k < n; k++) window.GX.star(E, P, cx - 120 + r() * 240, -260 + r() * 640, 5 + r() * 8, id + 1 + k);
   },
   sea(E, P, cx, id) {   // the Red Sea standing as two walls, a dry path between
     const { COL, smooth } = E;
-    this.bg(E, P, cx, COL.purple2, id);
     P.piece(smooth([[cx - 150, 640, 1], [cx - 150, 60, 1], [cx - 90, 40], [cx - 60, 200], [cx - 70, 420], [cx - 40, 640, 1]]), COL.cobalt, { id: id + 1, lead: 5.5, matW: 14 });
     P.piece(smooth([[cx + 150, 640, 1], [cx + 150, 60, 1], [cx + 90, 40], [cx + 60, 200], [cx + 70, 420], [cx + 40, 640, 1]]), COL.blue2, { id: id + 2, lead: 5.5, matW: 14 });
     P.piece(smooth([[cx - 40, 640, 1], [cx - 20, 300], [cx + 20, 300], [cx + 40, 640, 1]]), COL.gold, { id: id + 3, lead: 5, matW: 8 });
   },
   fire(E, P, cx, id) {
-    const { COL, smooth } = E; this.bg(E, P, cx, COL.deepblue, id);
+    const { COL, smooth } = E;
     P.piece(smooth([[cx - 40, 620, 1], [cx - 50, 300], [cx - 20, 60], [cx, -150], [cx + 22, 60], [cx + 50, 300], [cx + 40, 620, 1]]), COL.amber, { id: id + 1, lead: 5, mat: false, flat: true });
     P.piece(smooth([[cx - 16, 600, 1], [cx - 20, 300], [cx, 60], [cx + 20, 300], [cx + 16, 600, 1]]), COL.gold2, { id: id + 2, lead: 4, mat: false, flat: true });
   },
@@ -83,7 +82,8 @@ window.CLIP = {
   // ---------- windows per chapter ----------
   panes(E, ch, o = {}) {
     const { COL, roundel, sunDisc, tree, dove } = E, GX = window.GX, self = this;
-    const pane = (fn) => ({ content: (P, cx, base) => { fn(P, cx, base); P.setTransform(base); if (o.cracks && crackAt[ch]) { const q = crackAt[ch](cx); if (q) GX.drawCracks(E, P, GX.cracks(E, cx, q[0], q[1], q[2]), 1, o.cracks === 'mended'); } } });
+    const glass = GX.glass(E, ch === 'rainbow' ? 'flood' : ch);
+    const pane = (fn) => ({ glass, content: (P, cx, base) => { fn(P, cx, base); P.setTransform(base); if (o.cracks && crackAt[ch]) { const q = crackAt[ch](cx); if (q) GX.drawCracks(E, P, GX.cracks(E, cx, q[0], q[1], q[2]), 1, o.cracks === 'mended'); } } });
     // where each chapter's glass cracks (drawn after the pane's figures, in world space); null = no crack in that pane
     const { LX } = E, crackAt = {
       eden: (cx) => cx === LX[2] ? [cx - 80, 400, 31] : null,
@@ -105,7 +105,7 @@ window.CLIP = {
     if (ch === 'flood' || ch === 'rainbow') {
       const rb = ch === 'rainbow';
       return [0, 1, 2, 3].map((k) => pane((P, cx, b) => {
-        self.bg(E, P, cx, rb ? (k % 2 ? COL.blue2 : COL.cobalt) : COL.deepblue, 7700 + k);
+        if (rb) self.bg(E, P, cx, k % 2 ? COL.blue2 : COL.cobalt, 7700 + k);
         if (rb || k === 3) GX.rainbow(E, P, 0, 420, 520, 34, 7710 + k * 10);
         if (!rb && k === 0) for (let j = 0; j < 14; j++) E.brush(P.g, [[cx - 130 + j * 19, -300 + (j % 3) * 40], [cx - 150 + j * 19, 20 + (j % 4) * 50]], 1.4, { color: 'rgba(200,220,255,.5)' });
         if (k === 2 && !rb) { E.hills(P, cx, 560, [{ y: 0, a: 20, ph: 1, c: COL.olive }], 7790); self.fig(E, P, cx, b, 'noah', 'pray', -10, .8); }
@@ -120,7 +120,7 @@ window.CLIP = {
     }));
     if (ch === 'exodus') return [
       pane((P, cx) => self.fire(E, P, cx, 8300)),
-      pane((P, cx, b) => { self.bg(E, P, cx, COL.deepblue, 8400); E.hills(P, cx, 560, [{ y: 0, a: 8, ph: 1, c: COL.gold }], 8410); self.fig(E, P, cx, b, 'moses', 'raiseStaff', -10, .72); }),
+      pane((P, cx, b) => { E.hills(P, cx, 560, [{ y: 0, a: 8, ph: 1, c: COL.gold }], 8410); self.fig(E, P, cx, b, 'moses', 'raiseStaff', -10, .72); }),
       pane((P, cx) => self.sea(E, P, cx, 8500)),
       pane((P, cx) => self.sea(E, P, cx, 8600)),
     ];
@@ -132,8 +132,8 @@ window.CLIP = {
         E.drawGoliath(P, b.translate(cx + 10, 604 - 182).scale(-1, 1), { ...E.POSE.guard, wF: 40 * D }); }),
     ];
     if (ch === 'promise') return [
-      pane((P, cx) => { self.bg(E, P, cx, COL.cobalt, 9100); self.garden(E, P, cx, 9110); GX.bigTree(E, P, cx, 600, .8, 9120, 0); }),
-      pane((P, cx) => { self.bg(E, P, cx, COL.blue2, 9200); GX.waves(E, P, cx, 480, 1, 9210); GX.ark(E, P, cx, 480, 1, 9230); }),
+      pane((P, cx) => { self.garden(E, P, cx, 9110); GX.bigTree(E, P, cx, 600, .8, 9120, 0); }),
+      pane((P, cx) => { GX.waves(E, P, cx, 480, 1, 9210); GX.ark(E, P, cx, 480, 1, 9230); }),
       pane((P, cx) => { self.sea(E, P, cx, 9300); }),
       pane((P, cx) => { roundel(P, cx, -150, 78, COL.deepblue, 9400); for (let k = 0; k < 6; k++) GX.star(E, P, cx + Math.cos(k * 1.05) * 50, -150 + Math.sin(k * 1.05) * 50, 8, 9410 + k);
         P.piece(E.smooth([[cx - 40, 420, 1], [cx + 40, 420, 1], [cx + 26, 380], [cx - 26, 380]]), COL.gold, { id: 9450, lead: 4.5, matW: 6 });
@@ -148,7 +148,7 @@ window.CLIP = {
     const { LX, ROSE } = E, L = (k, o) => this.light(E, k, o), W = [0, 300, .5];
     const flash = (x, y) => [[x, y, 110, 3.2, [1, .96, .85]]];
     switch (id) {
-      case '01-1': return L('dawn', { cam: [0, ROSE.y, 2.6], sunI: 0, roseI: 1.5, amb: .02, rose: { lit: (q, k) => k === 0 ? 1 : .03 }, lancets: this.panes(E, 'genesis') });
+      case '01-1': return L('dawn', { cam: [0, ROSE.y, 2.6], sunI: 0, roseI: 1.5, amb: .02, rose: { lit: (q) => q.petal < 0 ? 1 : .03 }, lancets: this.panes(E, 'genesis') });
       case '01-2': return L('dawn', { cam: [0, ROSE.y + 20, 1.45], sunI: 0, roseI: 1.4, amb: .04, lancets: this.panes(E, 'genesis') });
       case '01-3': return L('dawn', { cam: W, sx: .2, sz: 1.35, lancets: this.panes(E, 'genesis'), inscription: [['光之窗 · WINDOWS OF LIGHT', 60, 0]], gild: .18, sweep: [0, 700, .55, 806] });
       case '02-1': return L('aft', { cam: [0, 400, 1.8], lancets: this.panes(E, 'eden') });

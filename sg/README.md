@@ -6,7 +6,7 @@ From **lemo-opuscar** by LemoLab × Claude Opus 5.5 — https://github.com/lemom
 | file | from | local changes |
 |---|---|---|
 | glass.js dragon.js lib.js | demo/, core/lib.js | none (import path of lib.js only) |
-| window.js | demo/window.js | painters exported; `st.content(P, cx, base)` hook for per-film pane art; `drawRose(P, {lit})` dims unlit rose pieces; carved text falls back to Noto Serif TC |
+| window.js | demo/window.js | rose redrawn (day-coloured petals, 36-piece jewel ring, `.petal` on every part); `mosaic(P, i, {quarry, pearl, band, fillet, fine})` palette hooks (defaults = demo); painters exported; `st.content(P, cx, base)` hook for per-film pane art; `drawRose(P, {lit})` dims unlit rose pieces; carved text falls back to Noto Serif TC |
 | scene.js | demo/scene.js | passes `st.rose` to drawRose; `st.ltint` overrides shaft tints; passes `st.spill` |
 | comp.js | demo/comp.js | `spill` uniform (default 1 = demo) scales the glow lit panes throw on the stone |
 | knight.js test.js | demo/ | shapes, grisaille helpers, panel helpers exported (used by figure.js, clips/cast.js) |

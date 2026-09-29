@@ -1,6 +1,48 @@
 // Shared pane painters for bible-story (load with uses: ['_glass']). Every painter takes E (engine: sg/ glass +
 // window + lib) and draws through a Pass P in world units. Pieces = cut glass; brush = grisaille paint.
 window.GX = {
+  // ---------- many-coloured mosaic, coloured by what each region depicts ----------
+  // Real windows are not random confetti: the sky is blues, night is deep blue/violet, the ground greens and earth,
+  // the sea blue/teal; the arch head carries the warm ornament; contrast pieces are rare. Figures stand in the sky
+  // zone, so they read against a cool ground (medieval / Florentine practice).
+  FAM: {
+    blue: ['#1d3a9c', '#142a70', '#2a52b0', '#22267a', '#1a5f9e'],
+    sky: ['#2a52b0', '#1a5f9e', '#3a6ac0', '#1d3a9c', '#4a7ac8'],
+    night: ['#142a70', '#22267a', '#1d3a9c', '#2a2a6a', '#3a2a7a'],
+    teal: ['#1f7a7a', '#2a8f9a', '#17606a', '#2f7f86', '#1a5f9e'],
+    green: ['#2f7f36', '#22602e', '#4f8f2a', '#2a6a4a', '#3f7a2a'],
+    earth: ['#7a4e24', '#6b7a22', '#b5781c', '#8a5a2a', '#5a4a1a'],
+    sand: ['#dc9a22', '#c9a030', '#b5781c', '#d9861c', '#eab640'],
+    gold: ['#dc9a22', '#eab640', '#b5781c', '#d9861c', '#c9a030'],
+    red: ['#a8101c', '#860c18', '#c8452a', '#8a1030', '#b0301c'],
+    violet: ['#632a63', '#4c2a5e', '#4a2a8a', '#a8356a', '#3a2a7a'],
+  },
+  // per chapter: head = arch-head ornament (above y −240), sky = [[family, weight]…] down to the horizon (y),
+  // ground below it; accent = the rare contrast pieces
+  KEYS: {
+    genesis: { head: [['gold', .7], ['red', .3]], sky: [['sky', .7], ['teal', .2], ['gold', .1]], horizon: 470, ground: [['green', .6], ['teal', .4]], accent: ['gold', 'red'] },
+    eden: { head: [['gold', .5], ['green', .5]], sky: [['sky', .8], ['teal', .2]], horizon: 500, ground: [['green', .7], ['earth', .3]], accent: ['red', 'gold'] },
+    flood: { head: [['teal', .6], ['blue', .4]], sky: [['blue', .5], ['night', .3], ['violet', .2]], horizon: 420, ground: [['teal', .5], ['blue', .5]], accent: ['gold'] },
+    abraham: { head: [['violet', .7], ['gold', .3]], sky: [['night', .75], ['violet', .25]], horizon: 540, ground: [['violet', .5], ['earth', .5]], accent: ['gold'] },
+    exodus: { head: [['red', .6], ['gold', .4]], sky: [['night', .7], ['violet', .2], ['blue', .1]], horizon: 520, ground: [['sand', .7], ['earth', .3]], accent: ['red', 'gold'] },
+    david: { head: [['gold', .6], ['red', .4]], sky: [['sky', .75], ['teal', .25]], horizon: 520, ground: [['earth', .6], ['green', .4]], accent: ['red'] },
+    promise: { head: [['gold', .5], ['red', .5]], sky: [['night', .6], ['violet', .3], ['red', .1]], horizon: 540, ground: [['green', .5], ['earth', .5]], accent: ['gold', 'teal'] },
+  },
+  // → the drawLancet `glass` option: { fine, quarry(cell, i), pearl(k, i) }
+  glass(E, key) {
+    const K = this.KEYS[key], F = this.FAM;
+    const pick = (zone, h) => { let acc = 0; for (const [f, w] of zone) { acc += w; if (h < acc) return F[f]; } return F[zone[zone.length - 1][0]]; };
+    const quarry = (c) => {
+      if (c.h2 > .96) { const A = F[K.accent[Math.floor(c.h * 97) % K.accent.length]]; return A[Math.floor(c.h * 13) % A.length]; }
+      const y = c.c[1] + (c.h - .5) * 60;                                    // jittered borders between regions
+      const zone = y < -240 ? K.head : y < K.horizon ? K.sky : K.ground;
+      const fam = pick(zone, (c.h * 7.3 + c.h2 * 3.1) % 1);
+      return fam[Math.floor(c.h2 * 53) % fam.length];
+    };
+    const PEARL = [E.COL.gold, E.COL.white, E.COL.green, E.COL.sky];
+    return { fine: true, quarry, pearl: (k) => PEARL[k % 4] };
+  },
+
   // five-point star cut as one piece
   star(E, P, x, y, r, id) {
     const pts = [...Array(10)].map((_, k) => { const a = -Math.PI / 2 + k * Math.PI / 5, q = k % 2 ? r * .45 : r; return [x + Math.cos(a) * q, y + Math.sin(a) * q, 1]; });
