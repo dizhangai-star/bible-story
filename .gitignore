@@ -1,0 +1,7 @@
+frames/
+audio/build/
+audio/samples/
+out/.*.mp4
+.claude/
+out/
+out/.*.mp4

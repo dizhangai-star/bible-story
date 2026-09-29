@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>光之窗 · Windows of Light</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Noto+Serif+TC:wght@500;600;700&display=block" rel="stylesheet">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block;width:100vw;height:auto}</style>
+</head>
+<body>
+<canvas id="cv" width="1920" height="1080"></canvas>
+<script src="../_kit/engine/core.js"></script>
+<script src="../_kit/engine/runtime.js"></script>
+<script src="timeline.js"></script>
+<script type="module">
+// Stained-glass engine for "光之窗 · Windows of Light" on the kit contract.
+// The renderer is lemo-opuscar's stained-glass demo (MIT, vendored in sg/, see sg/README.md): a clip returns the
+// demo's scene-state object from CLIP.state(t, E, T); renderScene draws glass/lead/stone into layers and the WebGL2
+// compositor lights them. The kit captures #cv, so the compositor's canvas is copied onto it every frame.
+import * as LIB from './sg/lib.js';
+import * as GLASS from './sg/glass.js';
+import * as WIN from './sg/window.js';
+import { makeComp } from './sg/comp.js';
+import { renderScene } from './sg/scene.js';
+import { drawBanderole } from './sg/subs.js';
+import { drawKnight, POSE } from './sg/knight.js';
+import { drawFigure, FPOSE, CAST } from './sg/figure.js';
+import { archPanel, drawPanel } from './sg/test.js';
+
+const mk = (w = 1920, h = 1080) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const glc = mk(), comp = makeComp(glc);
+const L = { G: mk(), S: mk(), R: mk(), O: mk(), P: mk(1024, 768) };
+const Lc = {}; for (const k in L) Lc[k] = L[k].getContext('2d');
+const x = document.getElementById('cv').getContext('2d');
+
+const { clamp, lerp, seg, ss, eio } = LIB;
+// keyframes [[t, value, ease?], …] → value at t (numbers or arrays); from the demo's story.js
+const key = (t, ks) => { if (t <= ks[0][0]) return ks[0][1]; for (let i = 0; i < ks.length - 1; i++) { const [t0, v0, e] = ks[i], [t1, v1] = ks[i + 1]; if (t < t1) { const u = (e || eio)(seg(t, t0, t1)); return Array.isArray(v0) ? v0.map((q, j) => lerp(q, v1[j], u)) : lerp(v0, v1, u); } } return ks[ks.length - 1][1]; };
+const step = (t, fps = 8) => Math.floor(t * fps + 1e-6) / fps;   // glass figures move in held steps
+// sun colours × intensity by time of day (STYLE.md §3)
+const SUN = { dawn: [.7, .83, 1.0], noon: [1, .97, .9], aft: [1, .84, .6], dusk: [1, .6, .34], violet: [.62, .34, .55], moon: [.55, .66, 1.0] };
+const E = { ...LIB, ...GLASS, ...WIN, key, step, SUN, Lc, L, comp, drawKnight, POSE, drawFigure, FPOSE, CAST, archPanel, drawPanel };
+window.E = E;
+
+const subsOf = (A) => (A.caps || []).map(([t0, t1, en, zh]) => ({ t0, t1, text: `${zh}\n${en}` }));
+window.renderAt = (t) => {
+  const A = window.CLIP, T = window.TIMELINE(A);
+  if (A.render) { A.render(t, E, T); x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(glc, 0, 0); return; }   // full-frame sheets (cast)
+  const st = A.state(t, E, T);
+  const fin = seg(t, T.fadeIn[0], T.fadeIn[1]), fout = 1 - seg(t, T.fade[0], T.fade[1]);
+  st.fade = Math.max(st.fade || 0, 1 - Math.min(fin, fout));
+  st.time = st.time ?? t;
+  const subs = subsOf(A), prev = st.overlay;
+  st.overlay = (O, M) => { if (prev) prev(O, M); if (!A.nosub) drawBanderole(O, subs, t); };
+  renderScene(Lc, L, comp, st);
+  x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(glc, 0, 0);
+};
+
+Kit.boot({
+  dir: 'clips', global: 'CLIP', param: 'clip', fallback: '01-genesis',
+  cjkFamily: 'Noto Serif TC', cjkWeights: ['500'],
+  zhText: (A) => (A.caps || []).map((c) => c[3]).join('') + (A.glyphs ?? ''),
+  fonts: (A, zh) => {
+    const en = (A.caps || []).map((c) => c[2]).join('') + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return [['600 20px Cinzel', en + (A.glyphsEn ?? '')], ['20px "IM Fell English"', en], ['italic 20px "IM Fell English"', en],
+      ['500 20px "Noto Serif TC"', zh || '字'], ['600 20px "Noto Serif TC"', zh || '字']];
+  },
+});
+</script>
+</body>
+</html>

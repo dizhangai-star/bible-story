@@ -1,0 +1,7 @@
+{
+  "name": "bible-story",
+  "version": "1.0.0",
+  "private": true,
+  "description": "光之窗 · Windows of Light — drawn in code with the video kit (cg-lab)",
+  "type": "module"
+}
