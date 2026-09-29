@@ -27,8 +27,7 @@ window.CLIP = {
     // in held glass steps; the fruit falls from Eve's hand halfway through the turn
     const eve = w > 0 ? ['offer', 'weep', w] : ['stand', 'offer', ss(seg(s, 5.6, 7.2))];
     const adam = w > 0 ? ['offer', 'weep', w] : ['stand', 'offer', ss(seg(s, 7.0, 8.6))];
-    const crack = seg(step(t, 12), T.crack, T.crack + .5);
-    const cr = GX.cracks(E, E.LX[2], this.FRUIT[0], this.FRUIT[1], 31);
+    const brk = GX.breakAt(E, E.LX[2], this.FRUIT[0], this.FRUIT[1], 31);   // the same break is mended in 07
     const sway = Math.sin(s * 2.1) * 3;   // the serpent's head, in held steps
     return [
       { glass, content: (P, cx) => { roundel(P, cx, -150, 78, COL.sky, 7000); sunDisc(P, cx, -150, 28, COL.gold2, 7030); GX.garden(E, P, cx, 7100); tree(P, cx - 50, 520, 1.2, 7120); tree(P, cx + 60, 530, 1, 7124); } },
@@ -37,7 +36,7 @@ window.CLIP = {
         roundel(P, cx, -150, 78, COL.sky, 7400); GX.garden(E, P, cx, 7410); GX.bigTree(E, P, cx + 100, 600, .8, 7420);
         GX.serpent(E, P, cx + 128 + sway, 470, .9, 7440);   // right of Eve, head turned to her ear
         GX.fig(E, P, cx, b, 'eve', eve, 25, .8, true, fell ? { item: null } : null);
-        P.setTransform(b); if (crack > 0) GX.drawCracks(E, P, cr, crack, false);
+        if (t >= T.crack) GX.drawBreak(E, P, b, brk, t, T.crack);   // the glass shatters from the fruit and stays broken
       } },
       { glass, content: (P, cx) => { roundel(P, cx, -150, 78, COL.purple, 7600); GX.garden(E, P, cx, 7610); tree(P, cx, 520, 1.3, 7620); } },
     ];

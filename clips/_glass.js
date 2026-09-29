@@ -125,6 +125,73 @@ window.GX = {
     });
   },
 
+  // shards between the radial cracks (sorted by angle round the break at ix, iy); each wedge splits into an inner
+  // and an outer shard at `f` of its length. → [{ p: Path2D, c: [x, y], inner, k }]
+  shards(E, cr, ix, iy, f = .45) {
+    const L = cr.map((c) => { const e = c.pts[c.pts.length - 1]; return { pts: c.pts, a: Math.atan2(e[1] - iy, e[0] - ix) }; }).sort((p, q) => p.a - q.a);
+    const out = [], poly = (pts) => { const p = new Path2D(); pts.forEach((q, k) => k ? p.lineTo(q[0], q[1]) : p.moveTo(q[0], q[1])); p.closePath(); return p; };
+    const mid = (pts) => pts.reduce((s, q) => [s[0] + q[0] / pts.length, s[1] + q[1] / pts.length], [0, 0]);
+    L.forEach((A, k) => {
+      const B = L[(k + 1) % L.length], a = Math.max(1, Math.round(A.pts.length * f)), b = Math.max(1, Math.round(B.pts.length * f));
+      const inner = [[ix, iy], ...A.pts.slice(1, a + 1), ...B.pts.slice(1, b + 1).reverse()];
+      const outer = [...A.pts.slice(a), ...B.pts.slice(b).reverse()];
+      out.push({ p: poly(inner), c: mid(inner), inner: true, k: k * 2 });
+      if (outer.length > 3) out.push({ p: poly(outer), c: mid(outer), inner: false, k: k * 2 + 1 });
+    });
+    return out;
+  },
+  // break the pane already drawn (mosaic + content) into those shards: each shard shifts out from the break, turns a
+  // little and loses light (tilted glass), the gaps go dark. b(k) → 0..1 how far shard k is out of place.
+  shatter(E, P, sh, ix, iy, b, seed) {
+    const r = E.mulberry(seed), J = sh.map(() => [r(), r(), r()]);
+    if (!sh.some((s) => b(s.k) > 0)) return;
+    this._snap = this._snap || [];
+    P.cx.forEach((c, n) => {
+      const M = c.getTransform(), cv = c.canvas, isG = c === P.g;
+      const S = this._snap[n] = this._snap[n] || document.createElement('canvas');
+      if (S.width !== cv.width || S.height !== cv.height) { S.width = cv.width; S.height = cv.height; }
+      const sg = S.getContext('2d'); sg.setTransform(1, 0, 0, 1, 0, 0); sg.clearRect(0, 0, S.width, S.height); sg.drawImage(cv, 0, 0);
+      const all = new Path2D(); sh.forEach((s) => { if (b(s.k) > 0) all.addPath(s.p); });
+      c.save(); c.setTransform(M);
+      if (isG) { c.fillStyle = '#8e98b0'; c.fill(all); }   // the gaps let a little light through
+      else { c.globalCompositeOperation = 'destination-out'; c.fill(all); }
+      c.restore();
+      sh.forEach((s, i) => {
+        const u = b(s.k); const [j0, j1, j2] = J[i];
+        const dx = s.c[0] - ix, dy = s.c[1] - iy, d = Math.hypot(dx, dy) || 1, m = u * (s.inner ? 8 : 5) * (.6 + .8 * j0);
+        const T = new DOMMatrix().translate(dx / d * m, dy / d * m + u * 2.5).translate(s.c[0], s.c[1]).rotate(u * (j1 - .5) * 10).translate(-s.c[0], -s.c[1]);
+        c.save(); c.setTransform(M.multiply(T)); c.clip(s.p);
+        c.setTransform(M.multiply(T).multiply(M.inverse())); c.drawImage(S, 0, 0);
+        if (isG && u > 0) { c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = `rgba(0,0,0,${u * (.1 + .5 * j2)})`; c.fillRect(0, 0, cv.width, cv.height); }
+        c.restore();
+      });
+    });
+  },
+
+  // a break in one lancet: cracks, shards, and each shard's rank from the outside in (the order they go back)
+  breakAt(E, cx, ix, iy, seed, n = 9) {
+    const K = [cx, ix, iy, seed, n].join(); this._brk = this._brk || {};
+    if (this._brk[K]) return this._brk[K];
+    const cr = this.cracks(E, cx, ix, iy, seed, n), sh = this.shards(E, cr, ix, iy), rank = [];
+    sh.map((s, i) => i).sort((a, b) => Math.hypot(sh[b].c[0] - ix, sh[b].c[1] - iy) - Math.hypot(sh[a].c[0] - ix, sh[a].c[1] - iy)).forEach((i, r) => { rank[sh[i].k] = r; });
+    return (this._brk[K] = { cr, sh, rank, ix, iy, seed, n: sh.length });
+  },
+  // draw a break at time t (call at the end of a pane's content): `hit` = when it shatters (the crack runs, the shards
+  // jump); optional mend = [t0, seat, weld]: shards slide back from t0 (outside in, `seat` s in all), then lead
+  // welds over the cracks from the break outward for `weld` s — the scars stay
+  drawBreak(E, P, base, B, t, hit, mend) {
+    const { seg, ss, step } = E, s8 = step(t), s12 = step(t, 12);
+    const out = hit == null ? 1 : ss(seg(s12, hit, hit + .25));
+    const back = (k) => mend ? seg(s8, mend[0] + B.rank[k] * mend[1] / B.n, mend[0] + B.rank[k] * mend[1] / B.n + .25) : 0;
+    P.setTransform(base);
+    if (out > 0) this.shatter(E, P, B.sh, B.ix, B.iy, (k) => out * (1 - back(k)), B.seed + 7);
+    const grow = hit == null ? 1 : seg(s12, hit, hit + .4);
+    if (grow > 0 && grow < 1) this.drawCracks(E, P, B.cr, grow, false);   // the crack runs; then the gaps carry the light
+    const weld = mend ? seg(s12, mend[0] + mend[1], mend[0] + mend[1] + mend[2]) : 0;
+    if (weld > 0) B.cr.forEach((q) => { const m = Math.max(2, Math.ceil(q.pts.length * weld)), p = new Path2D(); q.pts.slice(0, m).forEach((z, k) => k ? p.lineTo(z[0], z[1]) : p.moveTo(z[0], z[1])); P.lead(p, 3.4); });
+    return weld;
+  },
+
   // ---------- shared scene helpers (chapter clips + board.js) ----------
   // light presets for the darker hall look; o overrides any field
   light(E, k, o = {}) {
@@ -137,6 +204,7 @@ window.GX = {
   // pose: an FPOSE name, or [a, b, u] = blend of two poses (angles mixed, face switches at u .5); u is stepped by the caller
   pose(E, p) {
     if (typeof p === 'string') return E.FPOSE[p];
+    if (!Array.isArray(p)) return p;   // a pose object as is
     const [a, b, u] = p, A = E.FPOSE[a], B = E.FPOSE[b], o = { ...(u < .5 ? A : B) };
     for (const k in A) if (typeof A[k] === 'number' && typeof B[k] === 'number') o[k] = A[k] + (B[k] - A[k]) * u;
     return o;
