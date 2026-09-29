@@ -6,7 +6,7 @@
   each shot = shot size + angle + **one** camera move + **one** action + light + mood.
 - ≈ 2:00 proposed (7 windows + prologue); **only the sample (01-genesis, 15 s) is approved to build now.**
 - No narration. Captions: 繁體中文 (和合本) above, English (KJV) below, on the parchment banderole.
-- Music: Suno (see `SUNO.md`); glass foley in code. Cast sheet before any chapter with people.
+- Music: written in code (`audio/score.mjs`: organ, recorder, harp); glass foley in code. Cast sheet before any chapter with people.
 
 ## 2. Logline and arc
 A dark stone hall; light itself tells the Old Testament across one window, dawn to night.
@@ -85,4 +85,4 @@ last bell in 07. 07-4 repeats 01-3's framing: light from outside becomes light f
 ## 6. Sound design
 | section | ambience | foley | music | silence |
 |---|---|---|---|---|
-| all | stone hall room tone, long reverb (room .93) | struck glass (1:2.32:4.25:6.63:9.38), crack, lead creak, air | Suno track (SUNO.md) | before Eden crack; before the final bell |
+| all | stone hall room tone, long reverb (room .93) | struck glass (1:2.32:4.25:6.63:9.38), crack, lead creak, air | code score (`audio/score.mjs`) | before Eden crack; before the final bell |

@@ -4,7 +4,8 @@
 
 ## Next step
 **Sprint 4 (06-david 16 s, 07-promise 20 s; 02-eden re-cut with shards) SIGNED OFF by the user 2026-09-30.**
-Next: **Sprint 5 · Sound** once the user's Suno track is in (`audio/suno/film.wav`, see SUNO.md), then Sprint 6 ·
+**Sprint 5 · Sound in progress:** Suno dropped (user, 2026-09-30) → music written in code, `audio/score.mjs`, per clip.
+Score 01–07 SIGNED OFF by the user 2026-09-30 (mixed into out/). Next: foley pass if needed, then Sprint 6 ·
 Deliver (transitions, Latin inscription, compile, check, srt, poster). Renders are per clip in `out/` (not in git).
 Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
 
@@ -14,7 +15,11 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 - **Format:** 16:9, 1920×1080, 24 fps (glass figures step at 8 fps, light/camera on ones).
 - **Language / captions:** 繁體中文 (和合本) above, English (KJV) below, two-line banderole. No narration.
 - **Fonts:** Cinzel (carving), IM Fell English (+ italic, captions), Noto Serif TC 500/600 — Google Fonts.
-- **Audio:** soundtrack 'film'. Music from Suno at `audio/suno/film.wav` (temp score until then); glass foley in code.
+- **Audio:** soundtrack 'film'. Music **in code** (user, 2026-09-30; Suno tried and dropped: Cover of an uploaded
+  guide gave a 3-min song, no instrumental switch, no usable API): `audio/score.mjs`, one score function per clip
+  (clip seconds, placed at the clip's start), pipe organ + alto recorder + harp, D Dorian, 80 BPM (0.75 s/beat); the
+  glass foley (sfx) carries the chimes/bells, so scores play around those notes (e.g. the recorder an octave under the
+  day notes). Unscored clips get a quiet drone. The picture is the master: music is written to the cues.
 - **Chapters:** 7 (≈ 2:00), approved 2026-09-29.
 - **Hall look (darker, sacred):** `amb` ≈ .075 after sunrise, `ambCol [.62,.64,.82]`, `spill .5` (glow thrown on the
   wall by lit panes, new compositor uniform), `contrast .22`, `vign .62`, `haze .45`, `raysK .55`. Title: `gild .18`
@@ -43,10 +48,10 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   through the lead/stone between windows; a light wipe; the last pane's colour carrying into the next).
 
 ## Sprints
-- [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames, SUNO.md
+- [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames
 - [x] **1 · Cast sheet v2 · storyboard v1 · glass colour + rose** — signed off 2026-09-29
 - [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [x] **3 · 04-abraham, 05-exodus** — signed off 2026-09-30 · [x] **4 · 06-david, 07-promise** — signed off 2026-09-30
-- [ ] **5 · Sound**: Suno track in, retime cuts to its beats, foley pass, mix
+- [ ] **5 · Sound**: code score per clip (`audio/score.mjs`) — [x] 01–07 signed off 2026-09-30; foley pass, mix
 - [ ] **6 · Deliver**: chapter transitions (see Decisions), compile, check, srt, poster
   - Polish (user, 2026-09-30): the carved string-course title `光之窗 · WINDOWS OF LIGHT` → Latin, as a real European
     church would carve it (Roman capitals, V for U). Options: `FENESTRAE LVCIS` (literal title) · `FIAT LVX` (Gen 1:3,
@@ -66,6 +71,14 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
 - Chapter clip pattern: `panes(E, t)` builds the four lancets for time t; `state(t, E)` picks the shot by t
   (hard cuts = `if` on t, moves = `key`), then sets `lancets`, `pts`, `time`. Figures move on `step(t)` (8 fps).
 - `clips/sf.js`: style frames (dev clip). Sfx kinds in `audio/music.mjs`: glass {m}, crack, air {d}, bell {m}.
+- Music: `audio/score.mjs` `SCORES[id](I, A)` with `I = { organ(t, d, midi|[midi], v, o), recorder(t, d, m, v, o),
+  harp(t, m, v, pan) }` in clip seconds; `tone()` options atk/rel/vib/chorus/breath/amp(u). `node ../_kit/audio/mix.mjs
+  <id>` rebuilds the film track and muxes the clip's slice into out/<id>.mp4. Each clip is scored in its own buffer,
+  cut by its fade (no tails into the next chapter). Silences (Eden 9.4–12.2, David 9.4–12.2, Promise 15.55–16.4)
+  need short harp rings (`harp(t, m, v, pan, ring)`): the default 3.5 s ring fills them.
+- Chapter keys: 01 D Dorian → D major on the light · 02 G major → E7 → silence → D minor · 03 Dm/Bb/C ostinato → F
+  → A → open D → G · 04 G (the stars are the melody) · 05 Dm pursuit → G → D (rays) → C–D → G · 06 Bb → A → D major
+  whirl → silence → G · 07 D → G → Em → A · the Genesis line over F–C–Bb–A → silence → D major (echo of the light).
 
 ## Notes
 - Cast iconography (v2, checked against the text and medieval/Doré tradition): Moses = two gold rays from the head
