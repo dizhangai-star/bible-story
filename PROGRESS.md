@@ -3,10 +3,9 @@
 **Resume here:** read this file (and `TREATMENT.md`), then continue from **Next step**.
 
 ## Next step
-**Sprint 3 (04-abraham 15 s, 05-exodus 18 s) SIGNED OFF by the user 2026-09-30.** Paused; next is
-**Sprint 4 · 06-david, 07-promise** when the user says go, same method — shots from
-`clips/board.js` + TREATMENT §4, ONE continuous camera per chapter, preview grids, then `render.mjs <id> --silent` and
-send the single mp4s (no full compile until delivery). User is making the Suno track (SUNO.md).
+**Sprint 4 (06-david 16 s, 07-promise 20 s; 02-eden re-cut with shards) SIGNED OFF by the user 2026-09-30.**
+Next: **Sprint 5 · Sound** once the user's Suno track is in (`audio/suno/film.wav`, see SUNO.md), then Sprint 6 ·
+Deliver (transitions, Latin inscription, compile, check, srt, poster). Renders are per clip in `out/` (not in git).
 Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_kit` required).
 
 ## Decisions (locked)
@@ -36,15 +35,23 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   step stays for figures' poses and wings.
 - **No top-down floor mode** (`floorMode 2`): its blurred projection reads as a different style; show the floor light
   in the perspective view (Flood ends tilting down and pushing onto the rainbow on the flagstones).
+- **Breaks are shards, not lines** (user, 2026-09-30): the pane is cut along the cracks into shards that shift out
+  from the break, turn a little and lose light (tilted glass); the gaps let a little light through. A break stays
+  until 07 mends it: shards slide back (outside in, 8 fps), then lead welds from the break outward (spark on the
+  beat); the scars stay and the pane is brighter whole than broken. Only real breaks are mended (02 fruit, 06 brow).
 - **Chapter transitions:** more than a fade to black — to design in the delivery sprint (ideas: the camera passes
   through the lead/stone between windows; a light wipe; the last pane's colour carrying into the next).
 
 ## Sprints
 - [x] **0 · Brief + look + sample**: engine adapter, 01-genesis, style frames, SUNO.md
 - [x] **1 · Cast sheet v2 · storyboard v1 · glass colour + rose** — signed off 2026-09-29
-- [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [x] **3 · 04-abraham, 05-exodus** — signed off 2026-09-30 · [ ] **4 · 06-david, 07-promise**
+- [x] **2 · 02-eden, 03-flood** — signed off 2026-09-30 · [x] **3 · 04-abraham, 05-exodus** — signed off 2026-09-30 · [x] **4 · 06-david, 07-promise** — signed off 2026-09-30
 - [ ] **5 · Sound**: Suno track in, retime cuts to its beats, foley pass, mix
 - [ ] **6 · Deliver**: chapter transitions (see Decisions), compile, check, srt, poster
+  - Polish (user, 2026-09-30): the carved string-course title `光之窗 · WINDOWS OF LIGHT` → Latin, as a real European
+    church would carve it (Roman capitals, V for U). Options: `FENESTRAE LVCIS` (literal title) · `FIAT LVX` (Gen 1:3,
+    Vulgate) · `POPVLVS QVI AMBVLABAT IN TENEBRIS VIDIT LVCEM MAGNAM` (Isa 9:2, echoes 07). Set in `inscription` of
+    01-genesis, 07-promise, board.js; Chinese/English title then lives in the opening card / poster. Re-render 01, 07.
 
 ## How it works
 - `engine.html` imports `sg/*` modules; a clip's `state(t, E, T)` returns the demo's scene state
@@ -89,3 +96,15 @@ Code: https://github.com/dizhangai-star/bible-story (renders not in git; `../_ki
   walks up the road shrinking. `GX.KEYS[k].pearl` = optional pearl families.
 - `preview --crop` is in logical SCREEN units (640×360), not world: convert with the camera (x = cam.x + (3·sx − 960)/zoom).
 - Only 4 `pts` point lights per frame (comp.js uniform array).
+- Sprint 4 changes vs the board: David — Israel's tents (I), the brook + five stones (II); the stone is a point of
+  light (`pts`) arcing from David's hand (world 215, 420) to Goliath's brow (522, 282), the camera rides it back; the
+  crack starts at the brow, then Goliath blends guard → kneel (head bowed), the band opens over the whole window.
+  (Superseded: crack lines → shards, see Decisions.) Poses built in the clip (`E.FPOSE.throw`, whirl = sling pose with wF turning 90° per step). `GX.pose` now accepts a
+  pose object. Promise — one travelling light: cold moon band over I–III → gathers onto IV and warms as the lamp
+  kindles → pale dawn ray on I; the lamp pane keeps shining by a large warm `pts` light. Welds: cracks drawn bright,
+  lead laid over them from the break outward (`mend`), a spark `pts` at the break flaring on each 0.75 s beat.
+  Night with moonlight only (no band) is black: always give night chapters a dim band.
+- `GX.shatter` works on the pane already drawn: it snapshots the glass (g) and surface (s) canvases, clears the
+  shards' area (gap colour on g, transparent on s) and redraws each shard clipped + moved. Call it LAST in a pane's
+  content (figures are cut with the glass). `breakAt` caches shards per (cx, point, seed, n); the same seed in 07 as
+  in the chapter gives the same break. Dev clip `shatter-test` shows one full break → mend cycle.
